@@ -1,0 +1,96 @@
+# 东西放哪里
+source: .
+destination: ./_site
+collections_dir: .
+plugins_dir: _plugins
+layouts_dir: _layouts
+data_dir: _data
+includes_dir: _includes
+sass:
+  sass_dir: _sass
+  style: compressed
+collections:
+  posts:
+    output: true
+
+# 读取处理
+safe: false
+include:
+  - .htaccess
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+keep_files:
+  - .git
+  - .svn
+encoding: utf-8
+markdown_ext: "markdown,md"
+strict_front_matter: true
+
+# 过滤内容
+show_drafts: null
+limit_posts: 0
+future: true
+unpublished: false
+
+# 插件
+whitelist: []
+plugins: []
+
+# 转换
+lsi: false
+excerpt_separator: "\n\n"
+incremental: false
+
+# 开发用服务器
+detach: false
+port: 4000
+host: 127.0.0.1
+baseurl: "" # 不包括主机名
+show_dir_listing: false
+
+# 输出
+permalink: date
+paginate_path: /page:num
+timezone: null
+
+quiet: false
+verbose: false
+defaults: []
+
+liquid:
+  error_mode: warn
+  strict_filters: false
+  strict_variables: false
+
+# Markdown
+markdown: kramdown
+kramdown:
+  auto_ids: true
+  entity_output: as_input
+  toc_levels: 1..6
+  smart_quotes:
+    - apos
+    - apos
+    - quot
+    - quot
+  input: GFM
+  hard_wrap: true
+  footnote_nr: 1
+  show_warnings: true
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    guess_lang: false
+  typographic_symbols:
+    hellip: "..."
+    mdash: "---"
+    ndash: "--"
+    laquo: "<<"
+    raquo: ">>"
+    laquo_space: "<< "
+    raquo_space: " >>"
