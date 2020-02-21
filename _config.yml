@@ -55,9 +55,9 @@ baseurl: "" # 不包括主机名
 show_dir_listing: false
 
 # 输出
-permalink: date
+permalink: /:categories/:basename:output_ext
 paginate_path: /page:num
-timezone: null
+timezone: Asia/Shanghai
 
 quiet: false
 verbose: false
