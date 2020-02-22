@@ -94,3 +94,5 @@ kramdown:
     raquo: ">>"
     laquo_space: "<< "
     raquo_space: " >>"
+
+theme: jekyll-theme-midnight
