@@ -55,7 +55,7 @@ baseurl: "" # 不包括主机名
 show_dir_listing: false
 
 # 输出
-permalink: /:categories/:title:output_ext
+permalink: /:categories/:year-:month-:day-:title:output_ext
 paginate_path: /page:num
 timezone: Asia/Shanghai
 
