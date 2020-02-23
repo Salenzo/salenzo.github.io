@@ -67,6 +67,11 @@ defaults:
       path: "" # 空字符串表示项目中的所有文件
     values:
       layout: "default"
+  -
+    scope:
+      path: "_posts"
+    values:
+      layout: "post"
 
 liquid:
   error_mode: warn
