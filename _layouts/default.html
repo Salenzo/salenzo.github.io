@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>{% if page.title %}{{ page.title | escape }} · {% endif %}{{ site.title | escape }}</title>
+		<link rel="stylesheet" href="{{ "/theme.css" | relative_url }}">
+		<link rel="canonical" href="{{ page.url | replace: "index.html", "" | absolute_url }}">
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="{{ "/" | relative_url }}">{{ site.title | escape }}</a>
+				{% for item in site.data.navigation %}
+					{% if item.children %}
+						<span>{{ item.title | escape }}<ul>
+							{% for child in item.children %}
+								<li><a href="{{ child.url | relative_url }}">{{ child.title | escape }}</a></li>
+							{% endfor %}
+						</ul></span>
+					{% else %}
+						<a href="{{ item.url | relative_url }}">{{ item.title | escape }}</a>
+					{% endif %}
+				{% endfor %}
+			</nav>
+		</header>
+		<main>
+			{% if page.style %}
+				<div class="{{ page.style }}-style">
+					{{ content }}
+				</div>
+			{% else %}
+				{{ content }}
+			{% endif %}
+		</main>
+		<footer>
+			<hr>
+		</footer>
+	</body>
+</html>

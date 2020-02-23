@@ -61,7 +61,12 @@ timezone: Asia/Shanghai
 
 quiet: false
 verbose: false
-defaults: []
+defaults:
+  -
+    scope:
+      path: "" # 空字符串表示项目中的所有文件
+    values:
+      layout: "default"
 
 liquid:
   error_mode: warn
@@ -95,4 +100,5 @@ kramdown:
     laquo_space: "<< "
     raquo_space: " >>"
 
-theme: jekyll-theme-midnight
+# 自定义变量
+title: Ŝalenzo
