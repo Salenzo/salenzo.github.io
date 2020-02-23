@@ -55,7 +55,7 @@ baseurl: "" # 不包括主机名
 show_dir_listing: false
 
 # 输出
-permalink: /:categories/:year-:month-:day-:title:output_ext
+permalink: /:year-:month-:day-:title:output_ext
 paginate_path: /page:num
 timezone: Asia/Shanghai
 
@@ -100,5 +100,4 @@ kramdown:
     laquo_space: "<< "
     raquo_space: " >>"
 
-# 自定义变量
 title: Ŝalenzo
