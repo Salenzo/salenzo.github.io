@@ -10,6 +10,7 @@ html {
 	padding: 0;
 	font-family: "DengXian", sans-serif;
 	font-size: 14pt;
+	background-color: #f2ffff;
 }
 
 [lang^=ja] {
@@ -19,9 +20,17 @@ html {
 body {
 	margin: 0 auto;
 	padding: 2rem 6rem;
-	max-width: 44rem;
+	@media (max-width: 46rem) {
+		padding: 2rem 13.04347826%;
+	}
+	max-width: 46rem;
 	line-height: 1.5;
-	box-shadow: 0 0 1em cyan;
+	background-color: white;
+	box-shadow: 0 0 7em #ddffff, 0 0 0 0.4pt #9ef2eb;
+}
+
+::selection {
+	background-color: #adf2f5;
 }
 
 p {
@@ -60,6 +69,20 @@ main table {
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0.6em;
 	margin-bottom: 0;
+}
+
+@mixin text-outline($width, $color) {
+	text-shadow:
+		-$width #{-$width} $color,
+		-$width $width $color,
+		$width #{-$width} $color,
+		$width $width $color;
+}
+
+h1::before {
+	content: "❧";
+	margin-right: 0.5em;
+	color: #5fafaf;
 }
 
 ul, ol, dl {
