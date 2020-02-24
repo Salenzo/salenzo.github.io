@@ -6,4 +6,4 @@
 - [Ŝalenzo图标的设计](blog/2020-02-20-1.html)
 - [Python3爬虫实战](blog/2020-02-16-1.html)
 
-![Ŝalenzo Logo](MMPD.svg)
+![Ŝalenzo Logo](./assets/image/MMPD.svg)
