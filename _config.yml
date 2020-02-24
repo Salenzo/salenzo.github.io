@@ -69,7 +69,7 @@ defaults:
       layout: "default"
   -
     scope:
-      path: "_posts"
+      path: "blog"
     values:
       layout: "post"
 
