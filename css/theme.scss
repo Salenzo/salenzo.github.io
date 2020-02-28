@@ -25,7 +25,7 @@ body {
 	max-width: 46rem;
 	line-height: 1.5;
 	background-color: rgb(6, 0, 61);
-	box-shadow: 0 0 7em #ddffff, 0 0 0 0.4pt #9ef2eb;
+	box-shadow: 0 0 7em #ffffffad, 0 0 0 0.4pt #ffffffad;
 }
 
 ::selection {
@@ -35,6 +35,7 @@ body {
 p {
 	margin: 0;
 	text-indent: 2em;
+	color: rgb(179, 179, 179);
 }
 
 .metadata {
@@ -72,6 +73,7 @@ main table {
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0.6em;
 	margin-bottom: 0;
+	color: rgb(221, 220, 255);
 }
 
 @mixin text-outline($width, $color) {
