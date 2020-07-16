@@ -1,7 +1,6 @@
 ---
 layout: page
+title: Ŝalenzo
 ---
-
-Ŝalenzo
 
 ![Ŝalenzo Logo](../assets/image/MMPD.svg)
