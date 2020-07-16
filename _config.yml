@@ -1,6 +1,6 @@
 # 目录
 sass:
-  style: compressed
+    style: compressed
 
 # 读取处理
 encoding: utf-8
@@ -25,45 +25,44 @@ permalink: /blog/:year-:month-:day:output_ext
 timezone: Asia/Shanghai
 
 defaults:
-  -
-    scope:
-      path: ""
-      type: posts
-    values:
-      layout: post
-      style: post
+    - scope:
+          path: ""
+          type: posts
+      values:
+          layout: post
+          style: post
 
 liquid:
-  error_mode: warn
-  strict_filters: false
-  strict_variables: false
+    error_mode: warn
+    strict_filters: false
+    strict_variables: false
 
 # Markdown
 markdown: kramdown
 kramdown:
-  auto_ids: true
-  entity_output: as_input
-  toc_levels: 1..6
-  smart_quotes:
-    - apos
-    - apos
-    - quot
-    - quot
-  input: GFM
-  hard_wrap: true
-  footnote_nr: 1
-  show_warnings: true
-  syntax_highlighter: rouge
-  syntax_highlighter_opts:
-    guess_lang: false
-  typographic_symbols:
-    hellip: "..."
-    mdash: "---"
-    ndash: "--"
-    laquo: "<<"
-    raquo: ">>"
-    laquo_space: "<< "
-    raquo_space: " >>"
+    auto_ids: true
+    entity_output: as_input
+    toc_levels: 1..6
+    smart_quotes:
+        - apos
+        - apos
+        - quot
+        - quot
+    input: GFM
+    hard_wrap: true
+    footnote_nr: 1
+    show_warnings: true
+    syntax_highlighter: rouge
+    syntax_highlighter_opts:
+        guess_lang: false
+    typographic_symbols:
+        hellip: "..."
+        mdash: "---"
+        ndash: "--"
+        laquo: "<<"
+        raquo: ">>"
+        laquo_space: "<< "
+        raquo_space: " >>"
 
 # 自定义变量
 title: Ŝalenzo
