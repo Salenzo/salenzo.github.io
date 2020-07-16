@@ -1,36 +1,9 @@
 # 目录
-source: .
-destination: ./_site
-collections_dir: .
-plugins_dir: _plugins
-layouts_dir: _layouts
-data_dir: _data
-includes_dir: _includes
 sass:
-  sass_dir: _sass
   style: compressed
-collections:
-  posts:
-    output: true
 
 # 读取处理
-safe: false
-include:
-  - .htaccess
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - node_modules
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
-keep_files:
-  - .git
-  - .svn
 encoding: utf-8
-markdown_ext: "markdown,md"
-strict_front_matter: true
 
 # 过滤内容
 show_drafts: null
@@ -38,40 +11,27 @@ limit_posts: 0
 future: true
 unpublished: false
 
-# 插件
-whitelist: []
-plugins: []
-
 # 转换
 lsi: false
 excerpt_separator: "\n\n"
 incremental: false
 
 # 开发用服务器
-detach: false
-port: 4000
-host: 127.0.0.1
 baseurl: "" # 不包括主机名
 show_dir_listing: false
 
 # 输出
-permalink: /:year-:month-:day-:title:output_ext
-paginate_path: /page:num
+permalink: /blog/:year-:month-:day:output_ext
 timezone: Asia/Shanghai
 
-quiet: false
-verbose: false
 defaults:
   -
     scope:
-      path: "" # 空字符串表示项目中的所有文件
+      path: ""
+      type: posts
     values:
-      layout: "default"
-  -
-    scope:
-      path: "_post"
-    values:
-      layout: "post"
+      layout: post
+      style: post
 
 liquid:
   error_mode: warn
@@ -105,4 +65,6 @@ kramdown:
     laquo_space: "<< "
     raquo_space: " >>"
 
+# 自定义变量
 title: Ŝalenzo
+url: "http://metsubojinrai.top"

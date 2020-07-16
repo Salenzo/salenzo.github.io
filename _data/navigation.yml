@@ -1,0 +1,12 @@
+-
+  title: 博客
+  url: blog/
+-
+  title: 产品
+  children:
+    -
+      title: 邪神手办
+      url: products/figures
+-
+  title: 关于
+  url: about.html
