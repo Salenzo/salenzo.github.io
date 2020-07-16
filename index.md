@@ -2,6 +2,6 @@
 layout: page
 ---
 
-# 欢迎来到 Ŝalenzo 的主页
+# Ŝalenzo
 
 ![Ŝalenzo Logo](../assets/image/MMPD.svg)
