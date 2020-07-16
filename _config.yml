@@ -67,3 +67,6 @@ kramdown:
 # 自定义变量
 title: Ŝalenzo
 url: "http://metsubojinrai.top"
+
+source: _source
+destination: _deploy
