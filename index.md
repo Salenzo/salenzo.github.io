@@ -3,4 +3,4 @@ layout: page
 title: Ŝalenzo
 ---
 
-![Ŝalenzo Logo](../assets/image/MMPD.svg)
+![Ŝalenzo Logo](../assets/img/MMPD.svg)

@@ -44,6 +44,7 @@ p {
 }
 
 pre {
+<<<<<<< HEAD
 	white-space: pre-wrap;
 	margin: 0.5ex 0;
 	padding: 0.5ex 1em;
@@ -70,6 +71,34 @@ main table {
 		border: 0.4pt solid #869bbf;
 		padding: 0 0.5em;
 	}
+=======
+    white-space: pre-wrap;
+    margin: 0.5ex 0;
+    padding: 0.5ex 1em;
+    background-color: honeydew;
+    font-size: 10pt;
+    line-height: 1;
+    tab-size: 2;
+    -moz-tab-size: 2;
+}
+
+blockquote {
+    margin: 0.5ex 0;
+    padding: 0.5ex 2em;
+    background-color: whitesmoke;
+    border-left: 2pt solid gainsboro;
+}
+
+main table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    td,
+    th {
+        border: 0.4pt solid lightgray;
+        padding: 0 0.5em;
+    }
+>>>>>>> parent of e1f4b0c... scss
 }
 
 h1,
@@ -78,9 +107,15 @@ h3,
 h4,
 h5,
 h6 {
+<<<<<<< HEAD
 	margin-top: 0.6em;
 	margin-bottom: 0;
 	color: rgb(69, 67, 143);
+=======
+    margin-top: 0.6em;
+    margin-bottom: 0;
+    color: rgb(221, 220, 255);
+>>>>>>> parent of e1f4b0c... scss
 }
 
 @mixin text-outline($width, $color) {
@@ -109,5 +144,9 @@ dl {
 }
 
 a {
+<<<<<<< HEAD
 	color: #4a36c7;
+=======
+    color: rgb(133, 0, 0);
+>>>>>>> parent of e1f4b0c... scss
 }
