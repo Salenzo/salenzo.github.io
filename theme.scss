@@ -2,74 +2,74 @@
 ---
 
 * {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 html {
-    margin: 0;
-    padding: 0;
-    font-family: "DengXian", sans-serif;
-    font-size: 14pt;
-    background-color: #1b1f1f;
+	margin: 0;
+	padding: 0;
+	font-family: "DengXian", sans-serif;
+	font-size: 14pt;
+	background-color: #1b1f1f;
 }
 
 [lang^="ja"] {
-    font-family: "Yu Gothic", sans-serif;
+	font-family: "Yu Gothic", sans-serif;
 }
 
 body {
-    margin: 0 auto;
-    padding: 2rem 6rem;
-    @media (max-width: 46rem) {
-        padding: 2rem 13.04347826%;
-    }
-    max-width: 46rem;
-    line-height: 1.5;
-    background-color: #1b1f1f;
-    box-shadow: 0 0 7em #ffffffad, 0 0 0 0.4pt #ffffffad;
+	margin: 0 auto;
+	padding: 2rem 6rem;
+	@media (max-width: 46rem) {
+		padding: 2rem 13.04347826%;
+	}
+	max-width: 46rem;
+	line-height: 1.5;
+	background-color: #1b1f1f;
+	box-shadow: 0 0 7em #ffffffad, 0 0 0 0.4pt #ffffffad;
 }
 
 ::selection {
-    background-color: #adf2f5;
+	background-color: #adf2f5;
 }
 
 p {
-    margin: 0;
-    text-indent: 2em;
-    color: rgb(179, 179, 179);
+	margin: 0;
+	text-indent: 2em;
+	color: rgb(179, 179, 179);
 }
 
 .metadata {
-    color: gray;
+	color: gray;
 }
 
 pre {
-    white-space: pre-wrap;
-    margin: 0.5ex 0;
-    padding: 0.5ex 1em;
-    background-color: #101213;
-    font-size: 10pt;
-    line-height: 1;
-    tab-size: 2;
-    -moz-tab-size: 2;
+	white-space: pre-wrap;
+	margin: 0.5ex 0;
+	padding: 0.5ex 1em;
+	background-color: #101213;
+	font-size: 10pt;
+	line-height: 1;
+	tab-size: 2;
+	-moz-tab-size: 2;
 }
 
 blockquote {
-    margin: 0.5ex 0;
-    padding: 0.5ex 2em;
-    background-color: #101213;
-    border-left: 2pt solid #101213;
+	margin: 0.5ex 0;
+	padding: 0.5ex 2em;
+	background-color: #101213;
+	border-left: 2pt solid #101213;
 }
 
 main table {
-    margin-left: auto;
-    margin-right: auto;
-    border-collapse: collapse;
-    td,
-    th {
-        border: 0.4pt solid #869bbf;
-        padding: 0 0.5em;
-    }
+	margin-left: auto;
+	margin-right: auto;
+	border-collapse: collapse;
+	td,
+	th {
+		border: 0.4pt solid #869bbf;
+		padding: 0 0.5em;
+	}
 }
 
 h1,
@@ -78,36 +78,36 @@ h3,
 h4,
 h5,
 h6 {
-    margin-top: 0.6em;
-    margin-bottom: 0;
-    color: rgb(69, 67, 143);
+	margin-top: 0.6em;
+	margin-bottom: 0;
+	color: rgb(69, 67, 143);
 }
 
 @mixin text-outline($width, $color) {
-    text-shadow: -$width #{-$width} $color, -$width $width $color,
-        $width #{-$width} $color, $width $width $color;
+	text-shadow: -$width #{-$width} $color, -$width $width $color,
+		$width #{-$width} $color, $width $width $color;
 }
 
 h1::before {
-    content: "❧";
-    margin-right: 0.5em;
-    color: #5fafaf;
+	content: "❧";
+	margin-right: 0.5em;
+	color: #5fafaf;
 }
 
 ul,
 ol,
 dl {
-    margin-top: 0;
-    margin-bottom: 0;
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 .highlight {
-    .k,
-    .kn {
-        font-weight: bold;
-    }
+	.k,
+	.kn {
+		font-weight: bold;
+	}
 }
 
 a {
-    color: #4a36c7;
+	color: #4a36c7;
 }

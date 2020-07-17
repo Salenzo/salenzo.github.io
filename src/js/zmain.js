@@ -1,13 +1,13 @@
-(function( $, window, undefined ) {
+(function ($, window, undefined) {
   // Menu
-  $("a#slide").click(function(){
+  $("a#slide").click(function () {
     $("#sidebar,a#slide,#fade").addClass("slide");
     $("#open").hide();
     $("#search").hide();
     $("#close").show();
   });
 
-  $("#fade").click(function(){
+  $("#fade").click(function () {
     $("#sidebar,a#slide,#fade").removeClass("slide");
     $("#open").show();
     $("#search").show();
@@ -15,23 +15,23 @@
   });
 
   //Remove space scroll
-  window.onkeydown = function(e) {
-    if(e.keyCode == 32 && e.target == document.body) {
-        e.preventDefault();
-        return false;
+  window.onkeydown = function (e) {
+    if (e.keyCode == 32 && e.target == document.body) {
+      e.preventDefault();
+      return false;
     }
   };
 
   // Search panel mouse click event support
-  $('#searching').click(function(){
+  $('#searching').click(function () {
     $('#fade').trigger('click');
     $("#search").trigger('click');
   })
 
   //Keys
-  $(document).keydown(function(e){
-    if(!$('.search-form').hasClass('active')){
-      switch(e.key) {
+  $(document).keydown(function (e) {
+    if (!$('.search-form').hasClass('active')) {
+      switch (e.key) {
         case " ":
           $('a#slide').trigger('click');
           break;
@@ -41,8 +41,8 @@
       }
     }
 
-    if($('#sidebar').hasClass('slide')){
-      if(e.key === "s"){
+    if ($('#sidebar').hasClass('slide')) {
+      if (e.key === "s") {
         $('#fade').trigger('click');
         $("#search").trigger('click');
       } else {
@@ -50,7 +50,7 @@
       }
     }
 
-    if($('.search-form').hasClass('active') && e.key === "Escape"){
+    if ($('.search-form').hasClass('active') && e.key === "Escape") {
       $('.icon-remove-sign').trigger('click');
     }
   });
@@ -58,10 +58,10 @@
   //Key release
   //Fix : extra character 's' is entered to the input field when s
   //      witching to the search form by using keypress
-  $(document).keyup(function(e){
-    if($('.search-form').hasClass('active')){
+  $(document).keyup(function (e) {
+    if ($('.search-form').hasClass('active')) {
       $(".search-form").find('input').focus();
-    }else{
+    } else {
       $(".search-form").find('input').blur();
     }
   });
@@ -74,7 +74,7 @@
     dothis: $('.dosearch')
   };
 
-  bs.dothis.on('click', function() {
+  bs.dothis.on('click', function () {
     $('.search-wrapper').toggleClass('active');
     bs.searchform.toggleClass('active');
     // Only focus the form after key release, prvent the character 's'
@@ -84,9 +84,9 @@
     $('.search-field').simpleJekyllSearch();
   });
 
-  bs.close.on('click', function() {
+  bs.close.on('click', function () {
     $('.search-wrapper').toggleClass('active');
     bs.searchform.toggleClass('active');
     bs.canvas.removeClass('search-overlay');
   });
-})( Zepto, window );
+})(Zepto, window);

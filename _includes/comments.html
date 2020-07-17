@@ -9,7 +9,7 @@
 
     var disqus_loaded = false;
 
-    function load_disqus(){
+    function load_disqus() {
         disqus_loaded = true;
         var disqus_shortname = '{{site.disqus_username}}';
         var disqus_title = '{{page.title.replace("'", "\\'")}}';
@@ -20,10 +20,10 @@
         var ldr = document.getElementById('disqus_loader');
     };
 
-    window.onscroll = function(e) {
+    window.onscroll = function (e) {
         if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 800)) {
             //hit bottom of page
-            if (disqus_loaded==false)
+            if (disqus_loaded == false)
                 load_disqus()
         }
     };
