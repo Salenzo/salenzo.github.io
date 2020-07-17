@@ -1,6 +1,8 @@
 -- -
 layout: empty
-  -- - [{
+  -- -
+
+  [{
     %
     for post in site.posts %
   } {
@@ -10,9 +12,12 @@ layout: empty
     "url": "{{ site.baseurl }}{{ post.url }}",
     "date": "{{ post.date | date_to_string}}"
   } {
-    % unless forloop.last %
+    %
+    unless forloop.last %
   }, {
-    % endunless %
+    %
+    endunless %
   } {
-    % endfor %
+    %
+    endfor %
   }]
