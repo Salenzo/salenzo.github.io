@@ -94,7 +94,7 @@ def interface
   when "3"
     generate
   when "4"
-    filename = Time.now.strftime("src/blog/%Y-%m-%d.md")
+    filename = Time.now.strftime("src/post/%Y-%m-%d.md")
     if FileTest.exist?(filename)
       raise "今天已经写过一篇博客文章了，明天再写吧。"
     end
@@ -118,7 +118,7 @@ def interface
       end
     else
       puts "请现在手动打开index.html。"
-    end  
+    end
   when "0"
     puts "即将退出。"
   else
