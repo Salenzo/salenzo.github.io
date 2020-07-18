@@ -8,7 +8,7 @@ require 'pathname'
 
 def apply_template(template, contents, dest_filename)
   r = template.chomp + "\n"
-  r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
+  nil while r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
   r.gsub!(/(href|src)=\"\/(.+?)\"/i) { "%s=\"%s\"" % [$1, Pathname.new($2).relative_path_from(Pathname.new(File.dirname(dest_filename)))] }
   r.gsub!(/^\s*#pragma\s+CONTENTS\s*$/, contents)
 end
@@ -74,7 +74,7 @@ def interface
   option = ARGV[0]
   if not option
     puts <<~EOF
-      slzblog是
+      slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
       请选择你的英雄：
       [1] 预览
       [2] 上传
