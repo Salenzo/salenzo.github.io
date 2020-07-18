@@ -74,9 +74,12 @@ def interface
   option = ARGV[0]
   if not option
     puts <<~EOF
+      slzblog是
       请选择你的英雄：
       [1] 预览
       [2] 上传
+      [3] 只生成而不预览或上传
+      [4] 开始编写一篇博客文章
       [0] 退出
     EOF
     option = $stdin.getch
@@ -88,6 +91,34 @@ def interface
   when "2"
     generate
     upload
+  when "3"
+    generate
+  when "4"
+    filename = Time.now.strftime("src/blog/%Y-%m-%d.md")
+    if FileTest.exist?(filename)
+      raise "今天已经写过一篇博客文章了，明天再写吧。"
+    end
+    File.write(filename, "")
+    puts "让我猜猜你最爱用的编辑器。"
+    if ENV['OS'] == 'Windows_NT'
+      tasks = `wmic process get ExecutablePath`.force_encoding('BINARY').encode('UTF-8', :undef => :replace, :replace => '').split(/\s+\n+\s+/).map(&:downcase)
+      possibilities = tasks.select do |filename|
+        %w(atom.exe code.exe gvim.exe emacs.exe scite.exe).include?(File.basename(filename))
+      end
+      possibilities.uniq!
+      if possibilities.length == 1
+        system "start", possibilities.first, filename
+      else
+        possibilities.unshift("notepad.exe")
+        puts "你开着的编辑器太多了！选一个你中意的："
+        possibilities.each_with_index do |task, i|
+          puts "[#{i}] #{task}"
+        end
+        system "start", possibilities[$stdin.gets.chomp.to_i], filename
+      end
+    else
+      puts "请现在手动打开index.html。"
+    end  
   when "0"
     puts "即将退出。"
   else
