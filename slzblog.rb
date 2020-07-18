@@ -81,6 +81,13 @@ def interface
       [3] 只生成而不预览或上传
       [4] 开始编写一篇博客文章
       [0] 退出
+
+      Please choose your operation:
+      [1] Preview
+      [2] Upload
+      [3] Only generate without previewing or uploading
+      [4] Start writing a blog post
+      [0] Exit
     EOF
     option = $stdin.getch
   end
@@ -94,7 +101,7 @@ def interface
   when "3"
     generate
   when "4"
-    filename = Time.now.strftime("src/blog/%Y-%m-%d.md")
+    filename = Time.now.strftime("src/post/%Y-%m-%d.md")
     if FileTest.exist?(filename)
       raise "今天已经写过一篇博客文章了，明天再写吧。"
     end

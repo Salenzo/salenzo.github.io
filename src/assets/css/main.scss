@@ -1,3 +1,26 @@
 body {
-    background-color: lighten(lime, 40%);
+	background-color: #121414;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+h1,
+h2 {
+	color: #375e97;
+	font-size: 2em;
+	font-family: Arial, Helvetica, sans-serif;
+	border-bottom: 1px solid #375e97;
+}
+
+a:link,
+a:visited {
+	color: #3981bd;
+}
+
+p,
+li {
+	color: #9b9892;
+}
+
+div {
+	color: #9b9895;
 }
