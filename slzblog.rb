@@ -74,13 +74,12 @@ def interface
   option = ARGV[0]
   if not option
     puts <<~EOF
-      slzblog是
-      请选择你的英雄：
-      [1] 预览
-      [2] 上传
-      [3] 只生成而不预览或上传
-      [4] 开始编写一篇博客文章
-      [0] 退出
+        Please choose your operation:
+        [1] Preview
+        [2] Upload
+        [3] Only generate without preview or upload
+        [4] Start writing a blog post
+        [0] exit
     EOF
     option = $stdin.getch
   end
