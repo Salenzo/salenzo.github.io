@@ -117,7 +117,7 @@ def interface
         system "start", possibilities[$stdin.gets.chomp.to_i], filename
       end
     else
-      puts "请现在手动打开index.html。"
+      system ENV["EDITOR"], filename
     end  
   when "0"
     puts "即将退出。"
