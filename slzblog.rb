@@ -6,6 +6,9 @@ require 'kramdown-parser-gfm'
 require 'fileutils'
 require 'pathname'
 
+class UIErrorMessage < RuntimeError
+end
+
 def apply_template(template, contents, dest_filename)
   r = template.chomp + "\n"
   nil while r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
@@ -32,7 +35,7 @@ def generate
     when ".scss", ".sass"
       puts "正在编译样式表#{filename}……"
       if not system "sass", filename, dest.sub(/\.s[ac]ss$/, ".css")
-        raise "用SASS对#{filename}处理失败了！"
+        raise UIErrorMessage.new("用SASS对#{filename}处理失败了！")
       end
     when ".html", ".htm"
       puts "正在为超文本标记文本#{filename}应用模板……"
@@ -71,6 +74,13 @@ def upload
 end
 
 def interface
+  if not Dir.exist?(".git")
+    Dir.chdir(__dir__)
+    puts "工作目录不在一个git存储库顶端。已切换到slzblog.rb所在目录。"
+    if not Dir.exist?(".git")
+      raise UIErrorMessage.new("但是这仍不是一个git存储库顶端。")
+    end
+  end
   option = ARGV[0]
   if not option
     puts <<~EOF
@@ -103,7 +113,7 @@ def interface
   when "4"
     filename = Time.now.strftime("src/post/%Y-%m-%d.md")
     if FileTest.exist?(filename)
-      raise "今天已经写过一篇博客文章了，明天再写吧。"
+      raise UIErrorMessage.new("今天已经写过一篇博客文章了，明天再写吧。")
     end
     File.write(filename, "")
     puts "让我猜猜你最爱用的编辑器。"
@@ -135,7 +145,7 @@ def interface
 rescue => exception
   puts "发生了一些事情。（Something happened.）"
   puts exception.message
-  puts exception.backtrace.join("\n")
+  puts exception.backtrace.join("\n") unless exception.is_a?(UIErrorMessage)
   if ARGV[0].nil?
     puts "按任意键退出……"
     $stdin.getch
