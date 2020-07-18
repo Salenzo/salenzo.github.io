@@ -1,0 +1,107 @@
+#!/usr/bin/env ruby
+#encoding: utf-8
+require 'io/console'
+require 'kramdown'
+require 'kramdown-parser-gfm'
+require 'fileutils'
+require 'pathname'
+
+def apply_template(template, contents, dest_filename)
+  r = template.chomp + "\n"
+  r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
+  r.gsub!(/(href|src)=\"\/(.+?)\"/i) { "%s=\"%s\"" % [$1, Pathname.new($2).relative_path_from(Pathname.new(File.dirname(dest_filename)))] }
+  r.gsub!(/^\s*#pragma\s+CONTENTS\s*$/, contents)
+end
+
+def generate
+  if File.read(".git/HEAD").chomp != "ref: refs/heads/master"
+    puts "当前不在master分支上，请注意。"
+  end
+  main_template = File.read("src/modules/main.html")
+  Dir["src/**/*.*"].each do |filename|
+    template = File.dirname(filename).sub("src/", "").gsub("/", "_")
+    next if template =~ /^modules_?/
+    template = "src/modules/#{template}.html"
+    template = File.exist?(template) ? File.read(template) : main_template
+    dest = filename.sub("src/", "")
+    FileUtils.mkdir_p(File.dirname(dest))
+    case File.extname(filename)
+    when ".md", ".markdown"
+      puts "正在转换标记文本#{filename}……"
+      File.write(dest.sub(/\.md$/, ".html"), apply_template(template, Kramdown::Document.new(File.read(filename), input: "GFM", gfm_quirks: "paragraph_end,no_auto_typographic").to_html, dest))
+    when ".scss", ".sass"
+      puts "正在编译样式表#{filename}……"
+      if not system "sass", filename, dest.sub(/\.s[ac]ss$/, ".css")
+        raise "用SASS对#{filename}处理失败了！"
+      end
+    when ".html", ".htm"
+      puts "正在为超文本标记文本#{filename}应用模板……"
+      File.write(dest, apply_template(template, File.read(filename), dest))
+    when ".txt"
+      puts "正在转换文本#{filename}……"
+      contents = File.read(filename)
+      contents.gsub!("&", "&amp;")
+      contents.gsub!(/['\"<>]/, {"'" => "&apos;", "\"" => "&quot;", "<" => "&lt;", ">" => "&gt;"})
+      contents = "<pre>#{contents}</pre>"
+      File.write(dest.sub(/\.txt$/, ".html"), apply_template(template, contents, dest))
+    else
+      puts "正在复制#{filename}……"
+      FileUtils.cp(filename, dest)
+    end
+  end
+  if not true
+    puts "生成网站时发生错误。"
+  end
+end
+
+def preview
+  if ENV['OS'] == 'Windows_NT'
+    system "start .\\index.html"
+  else
+    puts "请现在手动打开index.html。"
+  end
+end
+
+def upload
+  system "git add -A"
+  system "git diff-index --quiet HEAD || git commit --quiet -m \"slzblog: upload\""
+  if not system "git push"
+    puts "上传时发生错误。"
+  end
+end
+
+def interface
+  option = ARGV[0]
+  if not option
+    puts <<~EOF
+      请选择你的英雄：
+      [1] 预览
+      [2] 上传
+      [0] 退出
+    EOF
+    option = $stdin.getch
+  end
+  case option
+  when "1"
+    generate
+    preview
+  when "2"
+    generate
+    upload
+  when "0"
+    puts "即将退出。"
+  else
+    puts "未知的选项，即将退出。"
+    $stdin.getch
+  end
+rescue => exception
+  puts "发生了一些事情。（Something happened.）"
+  puts exception.message
+  puts exception.backtrace.join("\n")
+  if ARGV[0].nil?
+    puts "按任意键退出……"
+    $stdin.getch
+  end
+end
+
+interface
