@@ -6,4 +6,4 @@
 
     Programming by Squirrel
 
-:warning: **警告**：对网站内容的修改请在src目录中进行。该目录外的内容会随时被slzblog.rb覆盖！
+:warning: **警告**：对网站内容的修改请在 src 目录中进行。该目录外的内容会随时被 slzblog.rb 覆盖！
