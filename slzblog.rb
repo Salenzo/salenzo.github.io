@@ -85,6 +85,8 @@ def interface
   if not option
     puts <<~EOF
       slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
+      警告：网站内容在src目录中。该目录外的内容会随时被本工具覆盖！
+
       请选择你的英雄：
       [1] 预览
       [2] 上传
