@@ -33,4 +33,9 @@ div {
   padding-left: 50px;
 }
 
+#leftsidebar {
+  font-size: 0.8em;
+  float: left;
+}
+
 /*# sourceMappingURL=main.css.map */
