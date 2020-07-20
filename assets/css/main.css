@@ -6,13 +6,11 @@ h1,
 h2 {
   color: #8e9886;
   font-size: 2em;
-  border-bottom: 1px solid #222628;
-}
+  border-bottom: 1px solid #222628; }
 
 a:link,
 a:visited {
-  color: #3981bd;
-}
+  color: #3981bd; }
 
 p,
 li {
