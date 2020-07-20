@@ -1,28 +1,23 @@
 body {
   background-color: #121414;
-  font-family: Arial, Helvetica, sans-serif;
-}
+  font-family: Arial, Helvetica, sans-serif; }
 
 h1,
 h2 {
   color: #375e97;
   font-size: 2em;
   font-family: Arial, Helvetica, sans-serif;
-  border-bottom: 1px solid #375e97;
-}
+  border-bottom: 1px solid #375e97; }
 
 a:link,
 a:visited {
-  color: #004680;
-}
+  color: #004680; }
 
 p,
 li {
-  color: #9b9892;
-}
+  color: #9b9892; }
 
 div {
-  color: #9b9895;
-}
+  color: #9b9895; }
 
 /*# sourceMappingURL=main.css.map */

@@ -17,8 +17,8 @@ def apply_template(template, contents, dest_filename)
 end
 
 def generate
-  if File.read(".git/HEAD").chomp != "ref: refs/heads/master"
-    puts "当前不在master分支上，请注意。"
+  if /ref: refs\/heads\/(master|gh-pages)/ !~ File.read(".git/HEAD").chomp
+    puts "当前不在master或gh-pages分支上，请注意。"
   end
   main_template = File.read("src/modules/main.html")
   Dir["src/**/*.*"].each do |filename|
@@ -52,9 +52,6 @@ def generate
       FileUtils.cp(filename, dest)
     end
   end
-  if not true
-    puts "生成网站时发生错误。"
-  end
 end
 
 def preview
@@ -69,7 +66,7 @@ def upload
   system "git add -A"
   system "git diff-index --quiet HEAD || git commit --quiet -m \"slzblog: upload\""
   if not system "git push"
-    puts "上传时发生错误。"
+    raise "上传时发生错误。"
   end
 end
 
@@ -78,13 +75,21 @@ def interface
     Dir.chdir(__dir__)
     puts "工作目录不在一个git存储库顶端。已切换到slzblog.rb所在目录。"
     if not Dir.exist?(".git")
-      raise UIErrorMessage.new("但是这仍不是一个git存储库顶端。")
+      raise UIErrorMessage.new("slzblog.rb所在目录仍不是一个git存储库顶端。我无路可退，故停止。")
     end
+  end
+  print "检查命令行工具Git……"
+  if not /\d+\.\d+\.\d+/ =~ `git --version`
+    raise UIErrorMessage.new("似乎没有安装Git，或者我不能使用。请确认已经安装Git命令行程序并全局可用。")
+  end
+  print "\r检查命令行工具SASS……"
+  if not /\d+\.\d+\.\d+/ =~ `sass --version`
+    raise UIErrorMessage.new("似乎没有安装SASS，或者我不能使用。请确认已经安装SASS命令行程序并全局可用。")
   end
   option = ARGV[0]
   if not option
     puts <<~EOF
-      slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
+      \r欢迎！slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
       警告：网站内容在src目录中。该目录外的内容会随时被本工具覆盖！
 
       请选择你的英雄：
@@ -92,13 +97,15 @@ def interface
       [2] 上传
       [3] 只生成而不预览或上传
       [4] 开始编写一篇博客文章
+      [9] slzblog的原理
       [0] 退出
-
+      
       Please choose your operation:
       [1] Preview
       [2] Upload
       [3] Only generate without previewing or uploading
       [4] Start writing a blog post
+      [9] How slzblog works
       [0] Exit
     EOF
     option = $stdin.getch
@@ -137,11 +144,22 @@ def interface
       end
     else
       system ENV["EDITOR"], filename
-    end  
+    end
+  when "9"
+    puts <<~EOF
+      　　假如你是李华，你要基于GitHub Pages服务制作静态个人网站，但是觉得Jekyll太难用，又不想直接写HTML和CSS。你在lihua.github.io存储库的src/index.md里写好自我介绍，在src/stylesheet.scss里编写好网站样式，在src/modules/navbar.html里制作好网站导航条，写出网页模板src/modules/default.html：
+        <title>李华的个人网站</title>
+        <link rel="stylesheet" src="/stylesheet.css">
+        <body>
+          #include "navbar.html"
+          <main>
+            #pragma CONTENTS
+      　　假如你的英语作文放在src/essay/english/001.md，如果你愿意，可为之使用模板src/modules/essay_english.html，而不是src/modules/default.html。slzblog会处理src目录，自动转换Markdown和SASS文件并套上模板。模板中常见的以/开头的链接也会被替换为相对路径，这样就能直接打开本地网页预览了。如果要直接发布，生成、提交、推送也能自动一气呵成。    
+    EOF
   when "0"
     puts "即将退出。"
   else
-    puts "未知的选项，即将退出。"
+    puts "未知的选项，按任意键退出。"
     $stdin.getch
   end
 rescue => exception
