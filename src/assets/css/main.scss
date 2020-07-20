@@ -23,3 +23,12 @@ li {
 div {
 	color: #9b9895;
 }
+
+.main {
+	max-width: -webkit-calc(800px - (50px * 2));
+	max-width: calc(800px - (50px * 2));
+	margin-right: auto;
+	margin-left: auto;
+	padding-right: 50px;
+	padding-left: 50px;
+}
