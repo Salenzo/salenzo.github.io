@@ -13,7 +13,7 @@ def apply_template(template, contents, dest_filename)
   r = template.chomp + "\n"
   nil while r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
   r.gsub!(/(href|src)=\"\/(.*?)\"/i) { "%s=\"%s\"" % [$1, Pathname.new($2).relative_path_from(Pathname.new(File.dirname(dest_filename)))] }
-  r.gsub!(/^\s*#pragma\s+CONTENTS\s*$/, contents)
+  r.sub!(/^\s*#pragma\s+CONTENTS\s*$/, contents)
 end
 
 def generate
@@ -156,14 +156,14 @@ def run(option)
     end
   when "9"
     puts <<~EOF
-      　　假如你是李华，你要基于GitHub Pages服务制作静态个人网站，但是觉得Jekyll太难用，又不想直接写HTML和CSS。你在lihua.github.io存储库的src/index.md里写好自我介绍，在src/stylesheet.scss里编写好网站样式，在src/modules/navbar.html里制作好网站导航条，写出网页模板src/modules/default.html：
+      　　假如你是李华，你要基于GitHub Pages服务制作静态个人网站，但是觉得Jekyll太难用，又不想直接写HTML和CSS。你在lihua.github.io存储库的src/index.md里写好自我介绍，在src/stylesheet.scss里编写好网站样式，在src/modules/navbar.html里制作好网站导航条，写出网页模板src/modules/main.html：
         <title>李华的个人网站</title>
         <link rel="stylesheet" src="/stylesheet.css">
         <body>
           #include "navbar.html"
           <main>
             #pragma CONTENTS
-      　　假如你的英语作文放在src/essay/english/001.md，如果你愿意，可为之使用模板src/modules/essay_english.html，而不是src/modules/default.html。slzblog会处理src目录，自动转换Markdown和SASS文件并套上模板。模板中常见的以/开头的链接也会被替换为相对路径，这样就能直接打开本地网页预览了。如果要直接发布，生成、提交、推送也能自动一气呵成。
+      　　假如你的英语作文放在src/essay/english/001.md，如果你愿意，可为之使用模板src/modules/essay_english.html，而不是src/modules/main.html。slzblog会处理src目录，自动转换Markdown和SASS文件并套上模板。模板中常见的以/开头的链接也会被替换为相对路径，这样就能直接打开本地网页预览了。如果要直接发布，生成、提交、推送也能自动一气呵成。
       　　按任意键继续……
     EOF
     $stdin.getch
