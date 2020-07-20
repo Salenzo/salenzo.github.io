@@ -17,8 +17,9 @@ def apply_template(template, contents, dest_filename)
 end
 
 def generate
-  if File.read(".git/HEAD").chomp != "ref: refs/heads/master"
-    puts "not the master branch"
+  if /ref: refs\/heads\/(master|gh-pages)/ !~ File.read(".git/HEAD").chomp
+    puts "当前不在master或gh-pages分支上，请注意。"
+    puts "Do note that you are not on branch master or gh-pages."
   end
   main_template = File.read("src/modules/main.html")
   Dir["src/**/*.*"].each do |filename|
@@ -64,7 +65,7 @@ end
 
 def upload
   system "git add -A"
-  system "git diff-index --quiet HEAD || git commit --quiet -m \"slzblog: upload\""
+  system "git diff-index --quiet HEAD || git commit --quiet -m \"slzite: upload\""
   if not system "git push"
     raise "上传时发生错误。"
   end
@@ -73,9 +74,9 @@ end
 def interface
   if not Dir.exist?(".git")
     Dir.chdir(__dir__)
-    puts "工作目录不在一个git存储库顶端。已切换到slzblog.rb所在目录。"
+    puts "工作目录不在一个git存储库顶端。已切换到_slzite.rb所在目录。"
     if not Dir.exist?(".git")
-      raise UIErrorMessage.new("slzblog.rb所在目录仍不是一个git存储库顶端。我无路可退，故停止。")
+      raise UIErrorMessage.new("_slzite.rb所在目录仍不是一个git存储库顶端。我无路可退，故停止。")
     end
   end
   print "检查命令行工具Git……"
@@ -89,15 +90,16 @@ def interface
   option = ARGV[0]
   if not option
     puts <<~EOF
-      \r欢迎！slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
+      \r欢迎！slzite是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
       警告：网站内容在src目录中。该目录外的内容会随时被本工具覆盖！
+      slzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser. Note that this tool is not directly related to the blog.
 
       请选择你的英雄：
       [1] 预览
       [2] 上传
       [3] 只生成而不预览或上传
       [4] 开始编写一篇博客文章
-      [9] slzblog的原理
+      [9] slzite的原理
       [0] 退出
 
       Please choose your operation:
@@ -105,7 +107,7 @@ def interface
       [2] Upload
       [3] Only generate without previewing or uploading
       [4] Start writing a blog post
-      [9] How slzblog works
+      [9] How slzite works
       [0] Exit
     EOF
     option = $stdin.getch
