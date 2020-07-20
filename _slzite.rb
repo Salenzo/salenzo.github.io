@@ -18,7 +18,7 @@ end
 
 def generate
   if File.read(".git/HEAD").chomp != "ref: refs/heads/master"
-    puts "当前不在master分支上，请注意。"
+    puts "not the master branch"
   end
   main_template = File.read("src/modules/main.html")
   Dir["src/**/*.*"].each do |filename|
@@ -84,14 +84,7 @@ def interface
   option = ARGV[0]
   if not option
     puts <<~EOF
-      slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
-      请选择你的英雄：
-      [1] 预览
-      [2] 上传
-      [3] 只生成而不预览或上传
-      [4] 开始编写一篇博客文章
-      [0] 退出
-
+    \nslzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser. Note that this tool is not directly related to the blog.
       Please choose your operation:
       [1] Preview
       [2] Upload
@@ -135,7 +128,7 @@ def interface
       end
     else
       system ENV["EDITOR"], filename
-    end  
+    end
   when "0"
     puts "即将退出。"
   else
@@ -143,7 +136,7 @@ def interface
     $stdin.getch
   end
 rescue => exception
-  puts "发生了一些事情。（Something happened.）"
+  puts "Something happened."
   puts exception.message
   puts exception.backtrace.join("\n") unless exception.is_a?(UIErrorMessage)
   if ARGV[0].nil?
@@ -152,4 +145,7 @@ rescue => exception
   end
 end
 
-interface
+
+while 1
+  interface
+end
