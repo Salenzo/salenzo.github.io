@@ -52,9 +52,6 @@ def generate
       FileUtils.cp(filename, dest)
     end
   end
-  if not true
-    puts "生成网站时发生错误。"
-  end
 end
 
 def preview
@@ -69,7 +66,7 @@ def upload
   system "git add -A"
   system "git diff-index --quiet HEAD || git commit --quiet -m \"slzblog: upload\""
   if not system "git push"
-    puts "上传时发生错误。"
+    raise "上传时发生错误。"
   end
 end
 
@@ -78,18 +75,37 @@ def interface
     Dir.chdir(__dir__)
     puts "工作目录不在一个git存储库顶端。已切换到slzblog.rb所在目录。"
     if not Dir.exist?(".git")
-      raise UIErrorMessage.new("但是这仍不是一个git存储库顶端。")
+      raise UIErrorMessage.new("slzblog.rb所在目录仍不是一个git存储库顶端。我无路可退，故停止。")
     end
+  end
+  print "检查命令行工具Git……"
+  if not /\d+\.\d+\.\d+/ =~ `git --version`
+    raise UIErrorMessage.new("似乎没有安装Git，或者我不能使用。请确认已经安装Git命令行程序并全局可用。")
+  end
+  print "\r检查命令行工具SASS……"
+  if not /\d+\.\d+\.\d+/ =~ `sass --version`
+    raise UIErrorMessage.new("似乎没有安装SASS，或者我不能使用。请确认已经安装SASS命令行程序并全局可用。")
   end
   option = ARGV[0]
   if not option
     puts <<~EOF
-    \nslzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser. Note that this tool is not directly related to the blog.
+      \r欢迎！slzblog是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。注意，本工具与博客并无直接关系。
+      警告：网站内容在src目录中。该目录外的内容会随时被本工具覆盖！
+
+      请选择你的英雄：
+      [1] 预览
+      [2] 上传
+      [3] 只生成而不预览或上传
+      [4] 开始编写一篇博客文章
+      [9] slzblog的原理
+      [0] 退出
+
       Please choose your operation:
       [1] Preview
       [2] Upload
       [3] Only generate without previewing or uploading
       [4] Start writing a blog post
+      [9] How slzblog works
       [0] Exit
     EOF
     option = $stdin.getch
@@ -132,7 +148,7 @@ def interface
   when "0"
     puts "即将退出。"
   else
-    puts "未知的选项，即将退出。"
+    puts "未知的选项，按任意键退出。"
     $stdin.getch
   end
 rescue => exception
