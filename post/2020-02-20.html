@@ -8,18 +8,28 @@
 </head>
 
 <body>
-<div>
-    <ul class="toolbar">
-        <li><a href="..">Home</a></li>
-        <li><a href=".">Post</a></li>
-        <li><a href="../about">About</a></li>
-        <li><a href="../help">Help</a></li>
-    </ul>
-    <br>
-    <br>
-    <br>
-    <br>
-</div>
+<header id="top">
+    <div class="site-title-nav">
+        <input type="checkbox" id="tn-tg" class="topnav-toggle fullscreen-toggle" aria-label="Navigation">
+        <label for="tn-tg" class="fullscreen-mask"></label>
+        <label for="tn-tg" class="hbg"><span class="hbg__in"></span></label>
+        <h1 class="site-title"><a href="..">Ŝalenzo<span>.top</span></a></h1>
+        <nav id="topnav" class="">
+            <section><a href=".."><span class="play">Home</span><span class="home">salenzo.github.io</span></a>
+                <div role="group"><a href="../?any#hook">sample</a></div>
+            </section>
+            <section><a href=".."><span class="play">Post</span><span class="home">salenzo.github.io</span></a>
+                <div role="group"><a href="../?any#hook">sample</a></div>
+            </section>
+            <section><a href=".."><span class="play">Support</span><span class="home">salenzo.github.io</span></a>
+                <div role="group"><a href="../?any#hook">sample</a></div>
+            </section>
+            <section><a href=".."><span class="play">About</span><span class="home">salenzo.github.io</span></a>
+                <div role="group"><a href="../?any#hook">sample</a></div>
+            </section>
+        </nav>
+    </div>
+</header>
 
     <h1>post</h1>
     <div class="main">
@@ -43,14 +53,14 @@ editdate: 2020-02-26</p>
 
 <p>{% raw %}</p>
 
-<pre><code class="language-mathematica">Graphics3D[
-    PolyhedronData["StellaOctangula", "Faces"],
-    Boxed → False,
-    Lighting → {{"Ambient", White}},
-    BaseStyle → Opacity[0],
-    ViewAngle → 100°
-]
-</code></pre>
+<div class="language-mathematica highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Graphics3D</span><span class="p">[</span><span class="w">
+    </span><span class="nb">PolyhedronData</span><span class="p">[</span><span class="s">"StellaOctangula"</span><span class="o">,</span><span class="w"> </span><span class="s">"Faces"</span><span class="p">]</span><span class="o">,</span><span class="w">
+    </span><span class="nb">Boxed</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nb">False</span><span class="o">,</span><span class="w">
+    </span><span class="nb">Lighting</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="p">{{</span><span class="s">"Ambient"</span><span class="o">,</span><span class="w"> </span><span class="nb">White</span><span class="p">}}</span><span class="o">,</span><span class="w">
+    </span><span class="nb">BaseStyle</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nb">Opacity</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">,</span><span class="w">
+    </span><span class="nb">ViewAngle</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="m">100</span><span class="err">°</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
 
 <p>{% endraw %}</p>
 
