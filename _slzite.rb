@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
+
 require 'io/console'
 require 'kramdown'
 require 'kramdown-parser-gfm'
@@ -18,7 +19,7 @@ end
 
 def generate
   if /ref: refs\/heads\/(master|gh-pages)/ !~ File.read(".git/HEAD").chomp
-    puts "当前不在master或gh-pages分支上，请注意。"
+    puts "It is not currently on the master or gh-pages branch, please note."
     puts "Do note that you are not on branch master or gh-pages."
   end
   main_template = File.read("src/modules/main.html")
@@ -31,25 +32,25 @@ def generate
     FileUtils.mkdir_p(File.dirname(dest))
     case File.extname(filename)
     when ".md", ".markdown"
-      puts "正在转换标记文本#{filename}……"
+      puts "Converting marked text #{filename}……"
       File.write(dest.sub(/\.md$/, ".html"), apply_template(template, Kramdown::Document.new(File.read(filename), input: "GFM", gfm_quirks: "paragraph_end,no_auto_typographic").to_html, dest))
     when ".scss", ".sass"
-      puts "正在编译样式表#{filename}……"
+      puts "Compiling style sheet #{filename}……"
       if not system "sass", filename, dest.sub(/\.s[ac]ss$/, ".css")
-        raise UIErrorMessage.new("用SASS对#{filename}处理失败了！")
+        raise UIErrorMessage.new("Failed to process #{filename} with SASS!")
       end
     when ".html", ".htm"
-      puts "正在为超文本标记文本#{filename}应用模板……"
+      puts "Marking text for hypertext #{filename} to applicate template..."
       File.write(dest, apply_template(template, File.read(filename), dest))
     when ".txt"
-      puts "正在转换文本#{filename}……"
+      puts "Converting text#{filename}……"
       contents = File.read(filename)
       contents.gsub!("&", "&amp;")
       contents.gsub!(/['\"<>]/, {"'" => "&apos;", "\"" => "&quot;", "<" => "&lt;", ">" => "&gt;"})
       contents = "<pre>#{contents}</pre>"
       File.write(dest.sub(/\.txt$/, ".html"), apply_template(template, contents, dest))
     else
-      puts "正在复制#{filename}……"
+      puts "Copying #{filename}……"
       FileUtils.cp(filename, dest)
     end
   end
@@ -59,7 +60,7 @@ def preview
   if ENV['OS'] == 'Windows_NT'
     system "start .\\index.html"
   else
-    puts "请现在手动打开index.html。"
+    puts "Please open manually now index.html。"
   end
 end
 
@@ -67,46 +68,36 @@ def upload
   system "git add -A"
   system "git diff-index --quiet HEAD || git commit --quiet -m \"slzite: upload\""
   if not system "git push"
-    raise "上传时发生错误。"
+    raise "An error occurred during upload."
   end
 end
 
 def check
   if not Dir.exist?(".git")
     Dir.chdir(__dir__)
-    puts "工作目录不在一个git存储库顶端。已切换到_slzite.rb所在目录。"
+    puts "The working directory is not at the top of a git repository. Switched to the directory where _slzite.rb is located."
     if not Dir.exist?(".git")
-      raise UIErrorMessage.new("_slzite.rb所在目录仍不是一个git存储库顶端。我无路可退，故停止。")
+      raise UIErrorMessage.new("The directory where _slzite.rb is located is still not at the top of a git repository. I have nowhere to go, so I stopped.")
     end
   end
-  print "检查命令行工具Git……"
+  print "Check the command line tool Git..."
   if not /\d+\.\d+\.\d+/ =~ `git --version`
-    raise UIErrorMessage.new("似乎没有安装Git，或者我不能使用。请确认已经安装Git命令行程序并全局可用。")
+    raise UIErrorMessage.new("It seems that Git is not installed, or I cannot use it. Please make sure that the Git command line program is installed and available globally. ")
   end
-  print "\r检查命令行工具SASS……"
+  print "\rCheck the command line tool SASS..."
   if not /\d+\.\d+\.\d+/ =~ `sass --version`
-    raise UIErrorMessage.new("似乎没有安装SASS，或者我不能使用。请确认已经安装SASS命令行程序并全局可用。")
+    raise UIErrorMessage.new("It seems that SASS is not installed, or I cannot use it. Please make sure that the SASS command line program has been installed and is globally available.")
   end
 end
 
 def interface(first_run)
   if first_run
     puts <<~EOF
-      \r欢迎！slzite是将使用Markdown、SASS、HTML模板技术制作的网站生成为浏览器可以直接查看的网页文件集的工具。
-      警告：网站内容在src目录中。该目录外的内容会随时被本工具覆盖！
-      slzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser.
+      \rslzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser.
       Warning: Website contents reside in src/. Files outside may be overwritten by this tool at any time.
     EOF
   end
   puts <<~EOF
-    请选择你的英雄：
-    [1] 预览
-    [2] 上传
-    [3] 只生成而不预览或上传
-    [4] 开始编写一篇博客文章
-    [9] slzite的原理
-    [0] 退出
-
     Please choose your operation:
     [1] Preview
     [2] Upload
@@ -131,10 +122,10 @@ def run(option)
   when "4"
     filename = Time.now.strftime("src/post/%Y-%m-%d.md")
     if FileTest.exist?(filename)
-      raise UIErrorMessage.new("今天已经写过一篇博客文章了，明天再写吧。")
+      raise UIErrorMessage.new("I have written a blog post today, so let’s write it tomorrow.")
     end
     File.write(filename, "")
-    puts "让我猜猜你最爱用的编辑器。"
+    puts "Let me guess your favorite editor."
     if ENV['OS'] == 'Windows_NT'
       tasks = `wmic process get ExecutablePath`.force_encoding('BINARY').encode('UTF-8', :undef => :replace, :replace => '').split(/\s+\n+\s+/).map(&:downcase)
       possibilities = tasks.select do |filename|
@@ -145,7 +136,7 @@ def run(option)
         system "start", possibilities.first, filename
       else
         possibilities.unshift("notepad.exe")
-        puts "你开着的编辑器太多了！选一个你中意的："
+        puts "You have too many editors! Choose the one you like:"
         possibilities.each_with_index do |task, i|
           puts "[#{i}] #{task}"
         end
@@ -156,29 +147,29 @@ def run(option)
     end
   when "9"
     puts <<~EOF
-      　　假如你是李华，你要基于GitHub Pages服务制作静态个人网站，但是觉得Jekyll太难用，又不想直接写HTML和CSS。你在lihua.github.io存储库的src/index.md里写好自我介绍，在src/stylesheet.scss里编写好网站样式，在src/modules/navbar.html里制作好网站导航条，写出网页模板src/modules/main.html：
-        <title>李华的个人网站</title>
+      　　If you are Li Hua, you want to make a static personal website based on GitHub Pages service, but you think Jekyll is too difficult to use, and you don't want to write HTML and CSS directly. You write your self-introduction in src/index.md in the lihua.github.io repository, write the website style in src/stylesheet.scss, make the website navigation bar in src/modules/navbar.html, and write it out Web page template src/modules/main.html:
+        <title>Li Hua's personal website</title>
         <link rel="stylesheet" src="/stylesheet.css">
         <body>
           #include "navbar.html"
           <main>
             #pragma CONTENTS
-      　　假如你的英语作文放在src/essay/english/001.md，如果你愿意，可为之使用模板src/modules/essay_english.html，而不是src/modules/main.html。slzblog会处理src目录，自动转换Markdown和SASS文件并套上模板。模板中常见的以/开头的链接也会被替换为相对路径，这样就能直接打开本地网页预览了。如果要直接发布，生成、提交、推送也能自动一气呵成。
-      　　按任意键继续……
+      　　 If your English composition is placed in src/essay/english/001.md, if you want, you can use the template src/modules/essay_english.html instead of src/modules/main.html. slzblog will process the src directory, automatically convert Markdown and SASS files and apply templates. Common links starting with / in the template will also be replaced with relative paths, so that you can directly open the local web page preview. If you want to publish directly, generation, submission, and push can also be done automatically in one go.
+      　　 Press any key to continue...
     EOF
     $stdin.getch
   when "0"
-    puts "即将退出。"
+    puts "About to exit."
     exit
   else
-    puts "未知的选项，请重试。"
+    puts "Unknown option, please try again."
   end
 rescue => exception
   puts "Something happened."
   puts exception.message
   puts exception.backtrace.join("\n") unless exception.is_a?(UIErrorMessage)
   if ARGV[0].nil?
-    puts "按任意键退出……"
+    puts "Press any key to exit……"
     $stdin.getch
   end
 end
