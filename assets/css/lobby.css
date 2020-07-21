@@ -284,6 +284,11 @@ body ::-webkit-scrollbar-thumb:active {
 	}
 	.lobby__side {
 		margin-top: 2em;
+		display: block;
+		left: 0;
+		top: 0;
+		width: 160px;
+		height: 100vh;
 	}
 	.lobby__counters {
 		margin: 0;
