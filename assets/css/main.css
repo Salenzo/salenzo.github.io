@@ -2588,4 +2588,10 @@ video {
   height: auto;
 }
 
+li {
+  display: list-item;
+  text-align: match-parent;
+  font-size: calc(20px + 20 * ((100vw - 320px) / 8800));
+}
+
 /*# sourceMappingURL=main.css.map */
