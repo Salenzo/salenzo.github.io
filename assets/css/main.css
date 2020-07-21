@@ -1321,7 +1321,7 @@ cg-container {
   }
 }
 @media (min-width: 980px) {
-  #topnav section .home {
+  #topnav section .part {
     display: none;
   }
 
