@@ -13,6 +13,7 @@ end
 def apply_template(template, contents, dest_filename)
   r = template.chomp + "\n"
   nil while r.gsub!(/^\s*#include\s+[<"](.+)[>"]\s*$/) { File.read("src/modules/#{$1}") }
+  r.gsub!(/(href|src)=\"\/\/(.*?)\"/i) { "%s=\"https://%s\"" % [$1, $2] }
   r.gsub!(/(href|src)=\"\/(.*?)\"/i) { "%s=\"%s\"" % [$1, Pathname.new($2).relative_path_from(Pathname.new(File.dirname(dest_filename)))] }
   r.sub!(/^\s*#pragma\s+CONTENTS\s*$/, contents)
 end
