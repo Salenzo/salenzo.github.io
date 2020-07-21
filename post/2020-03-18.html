@@ -50,22 +50,21 @@ editdate: 2020-03-19</p>
 <p>2020 年 3 月 4 日，松鼠符号今日问：$\dfrac{\partial f}{\partial x}$可以改写成$\dfrac{d\bigl(x \mapsto f(x, y)\bigr)}{dx}$吗？</p>
 
 <p>“我觉得我这微积分下册是学不下去了。我要发动符号革命了！”这么说着，于是在高数课上设计出了多元函数偏微分的松鼠符号。</p>
-
-<p>$\begin{aligned}<br />
-\frac{\partial z}{\partial x},<br />
-z_{x}’,<br />
-z_{x}<br />
-&amp; \;\longrightarrow\;<br />
-\frac{d\bigl((x\mapsto z)(x)\bigr)}{dx}<br />
-\<br />
-\left.\frac{\partial z}{\partial x}\right|<em>{(x_0, y_0)},<br />
-z</em>{x}’(x_0, y_0),<br />
-z_{x}(x_0, y_0)<br />
-&amp; \;\longrightarrow\;<br />
-\left.\frac{d\bigl((x\mapsto z)(x)\bigr)}{dx}\right|<em>{\scriptstyle x = x_0 \atop \scriptstyle y = y_0},<br />
-\left.\frac{d\bigl((x\mapsto z|</em>{y = y_0})(x)\bigr)}{dx}\right|_{x = x_0}<br />
-\end{aligned}$</p>
-
+<pre><code>$\begin{aligned}
+\frac{\partial z}{\partial x},
+z_{x}',
+z_{x}
+&amp; \;\longrightarrow\;
+\frac{d\bigl((x\mapsto z)(x)\bigr)}{dx}
+\
+\left.\frac{\partial z}{\partial x}\right|_{(x_0, y_0)},
+z_{x}'(x_0, y_0),
+z_{x}(x_0, y_0)
+&amp; \;\longrightarrow\;
+\left.\frac{d\bigl((x\mapsto z)(x)\bigr)}{dx}\right|_{\scriptstyle x = x_0 \atop \scriptstyle y = y_0},
+\left.\frac{d\bigl((x\mapsto z|_{y = y_0})(x)\bigr)}{dx}\right|_{x = x_0}
+\end{aligned}$
+</code></pre>
 <p>这样定义之后，∂ 这个符号可以完全扔掉了。这样就能让一些迷惑人的东西原形毕露，比如某个不能约分的分式$\displaystyle \frac{\partial P}{\partial T} \cdot \frac{\partial T}{\partial V} \cdot \frac{\partial V}{\partial P} = -1$。</p>
 
 <p>在研究如何将传统偏微分符号转换成松鼠符号时突然发现，由于函数<em>f</em>只是一种对应关系，与自变量字母<em>x</em>完全没有关系，传统导数符号$\dfrac{df}{dx}$和偏导数符号$\dfrac{\partial f}{\partial x}$是无意义的。</p>
