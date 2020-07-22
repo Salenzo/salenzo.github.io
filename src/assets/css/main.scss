@@ -2369,3 +2369,11 @@ li {
 	text-align: match-parent;
 	font-size: calc(20px + 20 * ((100vw - 320px) / 8800));
 }
+
+p {
+	display: block;
+	margin-block-start: 1em;
+	margin-block-end: 1em;
+	font-size: 1.2em;
+	line-height: 1.4285em;
+}
