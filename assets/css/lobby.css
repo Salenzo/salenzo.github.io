@@ -675,8 +675,9 @@ body ::-webkit-scrollbar-thumb:active {
 	margin-bottom: 0.5em;
 	line-height: 0.9;
 }
-.lobby__streams .stream.highlight strong {
+.lobby__streams .stream.highlight {
 	color: #bf811d;
+	background: none;
 }
 .lobby__streams .stream strong:before {
 	font-size: 1.5em;
