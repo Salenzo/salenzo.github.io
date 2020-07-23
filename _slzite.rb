@@ -95,7 +95,7 @@ end
 def interface(first_run)
   if first_run
     puts <<~EOF
-      \rslzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser.
+      \n\rslzite is a tool for generating websites made with Markdown, SASS, and HTML template technology into a set of webpage files that can be viewed directly by the browser.
       Warning: Website contents reside in src/. Files outside may be overwritten by this tool at any time.
     EOF
   end
