@@ -94,7 +94,9 @@ i {
 	font-style: normal;
 }
 li {
-	list-style: none;
+	list-style-position: inside;
+	list-style-type: circle;
+	line-height: 2em;
 }
 time {
 	font-size: 90%;
