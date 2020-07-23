@@ -106,6 +106,8 @@ li {
   list-style-position: inside;
   list-style-type: circle;
   line-height: 2em;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bolder;
 }
 
 time {
