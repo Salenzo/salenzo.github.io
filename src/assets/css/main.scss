@@ -15,6 +15,23 @@ html {
 	padding-left: 50px;
 }
 
+div.leftcolumn div.shawdow,
+div.rightcolumn div.shawdow,
+div.leftcolumn div.card,
+div.rightcolumn div.card {
+	box-shadow: 5px 5px 3px #161819;
+}
+
+div.leftcolumn > div.card,
+div.rightcolumn > div.card {
+	box-shadow: 5px 5px 5px #22222223;
+}
+
+header {
+	box-shadow: 3px 3px 3px #3f41410c;
+	border-radius: 10px;
+}
+
 .ninja-title,
 .site-title {
 	font-family: "Noto Sans";
@@ -2254,7 +2271,7 @@ var {
 .footer {
 	padding: 20px;
 	text-align: center;
-	background: #121414;
+	background: #181613;
 	margin-top: 20px;
 }
 
