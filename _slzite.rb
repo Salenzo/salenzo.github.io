@@ -100,7 +100,7 @@ def interface(first_run)
     EOF
   end
   puts <<~EOF
-    Please choose your operation:
+    \nPlease choose your operation:
     [1] Preview
     [2] Upload
     [3] Only generate without previewing or uploading
