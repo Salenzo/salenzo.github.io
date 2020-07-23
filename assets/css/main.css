@@ -16,6 +16,10 @@ html {
   padding-left: 50px;
 }
 
+div {
+  overflow: auto;
+}
+
 div.leftcolumn div.shawdow,
 div.rightcolumn div.shawdow,
 div.leftcolumn div.card,
