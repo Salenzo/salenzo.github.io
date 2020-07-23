@@ -106,7 +106,7 @@ def interface(first_run)
     [3] Only generate without previewing or uploading
     [4] Start writing a blog post
     [9] How slzite works
-    [0] Exit
+    [0] Exit\n
   EOF
   $stdin.getch
 end
