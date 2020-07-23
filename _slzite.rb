@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 #encoding: utf-8
+#author: satgo1546
 
 require 'io/console'
 require 'kramdown'
