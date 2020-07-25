@@ -58,14 +58,14 @@ editdate: 2020-02-26</p>
 
 <p>于是翻阅 Mathematica 自带三维几何形状库，挑选了一个看上去很好玩的形状<code>PolyhedronData["StellaOctangula"]</code>，徽标的本体就这样确定下来了。下面便是绘制出它的框架的 Wolfram 语言代码。</p>
 
-<div class="language-mathematica highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Graphics3D</span><span class="p">[</span><span class="w">
-    </span><span class="nb">PolyhedronData</span><span class="p">[</span><span class="s">"StellaOctangula"</span><span class="o">,</span><span class="w"> </span><span class="s">"Faces"</span><span class="p">]</span><span class="o">,</span><span class="w">
-    </span><span class="nb">Boxed</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nb">False</span><span class="o">,</span><span class="w">
-    </span><span class="nb">Lighting</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="p">{{</span><span class="s">"Ambient"</span><span class="o">,</span><span class="w"> </span><span class="nb">White</span><span class="p">}}</span><span class="o">,</span><span class="w">
-    </span><span class="nb">BaseStyle</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="nb">Opacity</span><span class="p">[</span><span class="m">0</span><span class="p">]</span><span class="o">,</span><span class="w">
-    </span><span class="nb">ViewAngle</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="m">100</span><span class="err">°</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre></div></div>
+<pre><code class="language-mathematica">Graphics3D[
+    PolyhedronData["StellaOctangula", "Faces"],
+    Boxed → False,
+    Lighting → {{"Ambient", White}},
+    BaseStyle → Opacity[0],
+    ViewAngle → 100°
+]
+</code></pre>
 
 <p>这个形状的英文名是 stellated octahedron，借用拉丁说法也叫 stella octangula，中文名为星形八面体。</p>
 
@@ -162,16 +162,16 @@ editdate: 2020-02-26</p>
             <h2>About us</h2>
             <br></br>
             <section class="lobby__streams">
-                <a class="stream highlight" href="https://github.com/akhialomgir"><strong class="text"
-                        data-icon="ब्रह्मन्">
+                <a class="stream highlight" href="https://github.com/akhialomgir"><strong class="text" data-icon="">
                         シュサイ
                         Akhia</strong></a>
-                <a class="stream highlight" href="https://github.com/satgo1546"><strong class="text"
-                        data-icon="ब्रह्मन्"> シュサイ
+                <a class="stream highlight" href="https://github.com/satgo1546"><strong class="text" data-icon=""> シュサイ
                         satgo1546</strong></a>
-                <a class="stream highlight" href="https://github.com/Ezioxk"><strong class="text" data-icon="ब्रह्मन्">
+                <a class="stream highlight" href="https://github.com/Ezioxk"><strong class="text" data-icon="">
                         シュサイ
                         Ezioxk</strong></a>
+                <a class="stream highlight" href="https://github.com/Ezioxk"><strong class="text" data-icon="">
+                        アート 星野弦</strong></a>
                 <a href="https://github.com/Salenzo" class="more">more »</a></section>
             <div>
                 <div scrollshow="true">
