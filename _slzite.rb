@@ -35,7 +35,8 @@ def generate
     case File.extname(filename)
     when ".md", ".markdown"
       puts "Converting marked text #{filename}……"
-      File.write(dest.sub(/\.md$/, ".html"), apply_template(template, Kramdown::Document.new(File.read(filename), input: "GFM", gfm_quirks: "paragraph_end,no_auto_typographic").to_html, dest))
+      File.write(dest.sub(/\.md$/, ".html"), apply_template(template, Kramdown::Document.new(File.read(filename),
+                                                            input: "GFM", gfm_quirks: "paragraph_end,no_auto_typographic").to_html, dest))
     when ".scss", ".sass"
       puts "Compiling style sheet #{filename}……"
       if not system "sass", filename, dest.sub(/\.s[ac]ss$/, ".css")
@@ -99,6 +100,13 @@ def interface(first_run)
       Warning: Website contents reside in src/. Files outside may be overwritten by this tool at any time.
     EOF
   end
+  
+  if RUBY_PLATFORM =~ /win32/  
+    system  "cls"
+  elsif 
+    system  "clear"
+  end  
+
   puts <<~EOF
     \nPlease choose your operation:
     [1] Preview
