@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ŝalenzo</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/lobby.css">
+    <link rel="stylesheet" href="../assets/css/syntax.css">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+        type="text/javascript"></script>
+    <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                inlineMath: [['$','$']]
+                }
+            });
+    </script>
+</head>
+
+  <body>
+<header id="top">
+  <div class="site-title-nav">
+    <label for="tn-tg" class="fullscreen-mask"></label>
+    <label for="tn-tg" class="hbg"><span class="hbg__in"></span></label>
+    <h1 class="site-title">
+      <a href="https://salenzo.github.io">Ŝalenzo<span>.top</span></a>
+    </h1>
+    <nav id="topnav">
+      <section>
+        <a href="../index.html"><span>Home</span><span class="part"></span></a>
+      </section>
+      <section>
+        <a href="../post/index.html"
+          ><span>Post</span><span class="part"></span
+        ></a>
+      </section>
+      <section>
+        <a href="../tool/index.html"
+          ><span>Tool</span><span class="part"></span
+        ></a>
+      </section>
+      <section>
+        <a href="index.html"
+          ><span>Game</span><span class="part"></span
+        ></a>
+      </section>
+      <section>
+        <a href="../about/index.html"
+          ><span>About</span><span class="part"></span
+        ></a>
+      </section>
+    </nav>
+  </div>
+</header>
+
+<div class="row">
+    <div class="leftcolumn">
+<div class="card">
+
+<SCRIPT LANGUAGE="JavaScript">
+<!-- Original:  Tomer Shiran
+
+<!-- This script and many more are available free online at -->
+<!-- The JavaScript Source!! http://javascript.internet.com -->
+
+<!-- Begin
+var total = 0
+var play = false
+function display(element) {
+var now = new Date()
+if (!play) {
+play = true
+startTime = now.getTime()}
+if (now.getTime() - startTime > 20000) {
+element.checked = !element.checked
+return
+}
+ if (element.checked)
+total++
+else
+total--
+element.form.num.value = total
+}
+function restart(form) {
+total = 0
+play = false
+for (var i = 1; i <= 100; ++i) {
+ form.elements[i].checked = false
+   }
+}
+// End -->
+</SCRIPT>
+<CENTER>Test your skill.  How many boxes can 
+you check in 20 seconds?</CENTER>
+<SCRIPT LANGUAGE="JavaScript">
+<!-- Begin
+document.write("<FORM><CENTER>")
+document.write('<INPUT TYPE="text" VALUE="0" ');
+document.write('NAME="num" SIZE=10 onFocus="this.blur()"><BR>')
+document.write("<HR SIZE=1 WIDTH=40%>")
+for (var i = 0; i < 10; ++i) {
+for (var j = 0; j < 10; ++j) {
+document.write('<INPUT TYPE="checkbox" ');
+document.write('onClick="display(this)">')}
+document.write("<BR>")}
+document.write("<HR SIZE=1 WIDTH=40%>")
+document.write('<INPUT TYPE="button" VALUE="restart" ');
+document.write('onClick="restart(this.form)">')
+document.write("</CENTER></FORM>")
+// End -->
+</SCRIPT>
+</div>
+
+    </div>
+    <div class="rightcolumn">
+        <div class="card">
+            <h2>About us</h2>
+            <br></br>
+            <section class="lobby__streams">
+                <a class="stream highlight" href="https://github.com/akhialomgir"><strong class="text" data-icon="">
+                        シュサイ
+                        Akhia</strong></a>
+                <a class="stream highlight" href="https://github.com/satgo1546"><strong class="text" data-icon=""> シュサイ
+                        satgo1546</strong></a>
+                <a class="stream highlight" href="https://github.com/Ezioxk"><strong class="text" data-icon="">
+                        シュサイ
+                        Ezioxk</strong></a>
+                <a class="stream highlight" href="http://mochanaigai363.lofter.com"><strong class="text" data-icon="">
+                        アート Flora</strong></a>
+                <a href="https://github.com/Salenzo" class="more">more »</a></section>
+            <div>
+                <div scrollshow="true">
+                    <h1 title="Ŝalenzo Website" class="title">
+                    </h1>
+                </div>
+                <br></br>
+                <center><img src="assets/img/MMPD.svg" alt="Ŝalenzo Logo" /></center>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="main"></div>
+<div class="footer shawdow">
+    <br>Copyright © Ŝalenzo</br>
+    <span>Powered by Ŝanity</span>
+</div>
+
+  </body>
+</html>

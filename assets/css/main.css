@@ -718,60 +718,6 @@ var {
   background: #181613;
   margin-top: 20px; }
 
-address,
-article,
-aside,
-blockquote,
-body,
-caption,
-center,
-col,
-colgroup,
-dd,
-dir,
-div,
-dl,
-dt,
-fieldset,
-figcaption,
-figure,
-footer,
-form,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-header,
-hgroup,
-hr,
-html,
-legend,
-li,
-listing,
-main,
-marquee,
-menu,
-nav,
-noframes,
-ol,
-p,
-plaintext,
-pre,
-section,
-summary,
-table,
-tbody,
-td,
-tfoot,
-th,
-thead,
-tr,
-ul,
-xmp {
-  unicode-bidi: isolate; }
-
 .leftcolumn {
   float: left;
   width: 75%; }
@@ -813,5 +759,17 @@ p {
   margin-block-end: 1em;
   font-size: 1.2em;
   line-height: 1.4285em; }
+
+#image_converter_input {
+  opacity: 0.1;
+  height: auto;
+  width: auto;
+  border-radius: 10px;
+  float: inherit; }
+
+#image_converter_log {
+  opacity: 0.4;
+  border-radius: 5px;
+  float: inherit; }
 
 /*# sourceMappingURL=main.css.map */

@@ -1,0 +1,53 @@
+
+<SCRIPT LANGUAGE="JavaScript">
+<!-- Original:  Tomer Shiran
+
+<!-- This script and many more are available free online at -->
+<!-- The JavaScript Source!! http://javascript.internet.com -->
+
+<!-- Begin
+var total = 0
+var play = false
+function display(element) {
+var now = new Date()
+if (!play) {
+play = true
+startTime = now.getTime()}
+if (now.getTime() - startTime > 20000) {
+element.checked = !element.checked
+return
+}
+ if (element.checked)
+total++
+else
+total--
+element.form.num.value = total
+}
+function restart(form) {
+total = 0
+play = false
+for (var i = 1; i <= 100; ++i) {
+ form.elements[i].checked = false
+   }
+}
+// End -->
+</SCRIPT>
+<CENTER>Test your skill.  How many boxes can 
+you check in 20 seconds?</CENTER>
+<SCRIPT LANGUAGE="JavaScript">
+<!-- Begin
+document.write("<FORM><CENTER>")
+document.write('<INPUT TYPE="text" VALUE="0" ');
+document.write('NAME="num" SIZE=10 onFocus="this.blur()"><BR>')
+document.write("<HR SIZE=1 WIDTH=40%>")
+for (var i = 0; i < 10; ++i) {
+for (var j = 0; j < 10; ++j) {
+document.write('<INPUT TYPE="checkbox" ');
+document.write('onClick="display(this)">')}
+document.write("<BR>")}
+document.write("<HR SIZE=1 WIDTH=40%>")
+document.write('<INPUT TYPE="button" VALUE="restart" ');
+document.write('onClick="restart(this.form)">')
+document.write("</CENTER></FORM>")
+// End -->
+</SCRIPT>
