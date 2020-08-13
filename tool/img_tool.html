@@ -88,8 +88,15 @@
     name="image_converter_color_mode"
   /><label for="image_converter_monochrome">G-0-128-256</label>
 </div>
-<div>
-  <input type="file" id="image_converter_input" accept="image/*" multiple />
+<div id="btn" title="upload">
+  upload
+  <input
+    type="file"
+    class="file"
+    id="image_converter_input"
+    accept="image/*"
+    multiple
+  />
 </div>
 <div><output id="image_converter_log"></output></div>
 <canvas width="800" height="600" id="image_converter_canvas"></canvas>

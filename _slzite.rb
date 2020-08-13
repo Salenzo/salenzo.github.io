@@ -103,8 +103,10 @@ def interface(first_run)
   
   if RUBY_PLATFORM =~ /win32/  
     system  "cls"
+    system  "pause"
   elsif 
     system  "clear"
+      system  "pause"
   end  
 
   puts <<~EOF
