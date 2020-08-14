@@ -35,13 +35,13 @@ def generate
     case File.extname(filename)
     when ".md", ".markdown"
       puts "Converting marked text #{filename}……"
-      File.write(dest.sub(/\.md$/, ".html"), apply_template(template, Kramdown::Document.new(File.read(filename),
-                                                            input: "GFM", gfm_quirks: "paragraph_end,no_auto_typographic").to_html, dest))
-    when ".scss", ".sass"
-      puts "Compiling style sheet #{filename}……"
-      if not system "sass", filename, dest.sub(/\.s[ac]ss$/, ".css")
-        raise UIErrorMessage.new("Failed to process #{filename} with SASS!")
-      end
+      File.write(dest.sub(/\.md$/, ".html"),
+        apply_template(template, Kramdown::Document.new(
+          File.read(filename),
+          input: "GFM",
+          gfm_quirks: "paragraph_end,no_auto_typographic"
+        ).to_html, dest)
+      )
     when ".html", ".htm"
       puts "Marking text for hypertext #{filename} to applicate template..."
       File.write(dest, apply_template(template, File.read(filename), dest))
@@ -159,7 +159,7 @@ def run(option)
     end
   when "9"
     puts <<~EOF
-      　　If you are Li Hua, you want to make a static personal website based on GitHub Pages service, but you think Jekyll is too difficult to use, and you don't want to write HTML and CSS directly. You write your self-introduction in src/index.md in the lihua.github.io repository, write the website style in src/stylesheet.scss, make the website navigation bar in src/modules/navbar.html, and write it out Web page template src/modules/main.html:
+      　　If you are Li Hua, you want to make a static personal website based on GitHub Pages service, but you think Jekyll is too difficult to use, and you don't want to write HTML and CSS directly. You write your self-introduction in src/index.md in the lihua.github.io repository, write the website style in src/stylesheet.css, make the website navigation bar in src/modules/navbar.html, and write it out Web page template src/modules/main.html:
         <title>Li Hua's personal website</title>
         <link rel="stylesheet" src="/stylesheet.css">
         <body>
