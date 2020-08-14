@@ -596,7 +596,6 @@ main.page-small {
 
 @media (min-width: 980px) {
 
-  .hamburger,
   .topnav-mask,
   .topnav-toggle {
     display: none;
@@ -700,12 +699,14 @@ main.page-small {
   .site-title {
     display: block;
   }
+
 }
 
 @media (max-width: 979px) {
   .site-title {
     margin-left: calc(0.5rem + var(--site-header-height));
   }
+
 }
 
 @media (min-height: 600px) {
@@ -713,6 +714,7 @@ main.page-small {
     font-size: 30px;
     line-height: 57px;
   }
+
 }
 
 @media (min-width: 980px) and (min-height: 600px) {
@@ -720,6 +722,7 @@ main.page-small {
     line-height: 55px;
     margin: 0 1rem;
   }
+
 }
 
 .site-title a {
@@ -767,25 +770,18 @@ main.page-small {
   justify-content: flex-start;
 }
 
-#clinput {
-  display: flex;
-  height: var(--site-header-height);
-}
+@media screen and (max-width: 400px) {
 
-#clinput input {
-  line-height: var(--site-header-height);
-  background: none;
-  padding: 0;
-  border: 0;
-  width: 0;
-}
-
-@media screen and (max-width: 800px) {
-
-  .leftcolumn,
   .rightcolumn {
+    width: 0%;
+    padding: 0;
+    float: none;
+  }
+
+  .leftcolumn {
     width: 100%;
     padding: 0;
+    float: none;
   }
 }
 
@@ -989,11 +985,11 @@ p {
 }
 
 #btn {
-  color: #006e92;
+  color: #24221e;
   background: transparent;
-  border: 2px solid #006e92;
+  border: 2px solid #24221e;
   border-radius: 6px;
-  color: #006e92;
+  color: #24221e;
   padding: 16px 32px;
   text-align: center;
   display: inline-block;
@@ -1012,9 +1008,9 @@ p {
 }
 
 #btn:hover {
-  background-color: #006e92;
+  background-color: #24221e;
   font-weight: 800;
-  color: white;
+  color: rgb(175, 175, 175);
 }
 
 #btn .file {
@@ -1029,6 +1025,9 @@ tr {
   border-radius: 4px;
   border-color: #5a5a5a31;
   box-shadow: 5px 5px 5px #22222223;
+  border: 0;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 [type="radio"]+label::before {
@@ -1040,7 +1039,7 @@ tr {
   height: 1em;
   margin-right: 0.4em;
   border-radius: 50%;
-  border: 1px solid #01cd78;
+  border: 1px solid #01cd788e;
   text-indent: 0.15em;
   line-height: 1;
 }
@@ -1077,19 +1076,16 @@ input[type="text"] {
 select {
   border: none;
   outline: none;
+
   appearance: none;
   -moz-appearance: none;
   -webkit-appearance: none;
+
   background: url("http://ourjs.github.io/static/2015/arrow.png") no-repeat scroll right center transparent;
+
   padding-right: 18px;
 }
 
 select::-ms-expand {
   display: none;
 }
-
-.rightcolumn {
-  position: fixed;
-}
-
-/*# sourceMappingURL=main.css.map */
