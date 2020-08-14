@@ -1,50 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ŝalenzo</title>
-  <meta charset="utf-8" />
-  <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon" />
-  <link rel="stylesheet" href="../assets/css/main.css" />
-  <link rel="stylesheet" href="../assets/css/lobby.css" />
-  <link rel="stylesheet" href="../assets/css/syntax.css" />
-  <script
-    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    type="text/javascript"
-  ></script>
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-        inlineMath: [['$','$']]
-        }
-    });
-  </script>
-  <script>
-    (function () {
-      var oDiv = document.getElementsByClassName("rightcolumn");
-      var H = 0,
-        iE6;
-      var Y = oDiv;
-      while (Y) {
-        H += Y.offsetTop;
-        Y = Y.offsetParent;
-      }
-      iE6 = window.ActiveXObject && !window.XMLHttpRequest;
-      if (!iE6) {
-        window.οnscrοll = function () {
-          var s = document.body.scrollTop || document.documentElement.scrollTop;
-          if (s > H) {
-            oDiv.className = "rightcolumn";
-            if (iE6) {
-              oDiv.style.top = s - H + "px";
-            }
-          } else {
-            oDiv.className = "";
-          }
-        };
-      }
-    })();
-  </script>
+    <title>Ŝalenzo</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/lobby.css">
+    <link rel="stylesheet" href="../assets/css/syntax.css">
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+        type="text/javascript"></script>
+    <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                tex2jax: {
+                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+                inlineMath: [['$','$']]
+                }
+            });
+    </script>
 </head>
 
   <body>
@@ -65,12 +37,12 @@
         ></a>
       </section>
       <section>
-        <a href="index.html"
+        <a href="../tool/index.html"
           ><span>Tool</span><span class="part"></span
         ></a>
       </section>
       <section>
-        <a href="../game/index.html"
+        <a href="index.html"
           ><span>Game</span><span class="part"></span
         ></a>
       </section>
@@ -86,18 +58,49 @@
 <div class="row">
     <div class="leftcolumn">
 <div class="card">
-<!DOCTYPE html>
-<html>
-  <body>
-    <h2>Tools</h2>
-    <div class="card">
-      <ul id="tools">
-        <li><a href="img_tool.html">img tool</a></li>
-        <li><a href="caculator.html">caculator</a></li>
-      </ul>
-    </div>
-  </body>
-</html>
+<script language="JavaScript">
+  var total = 0;
+  var play = false;
+  function display(element) {
+    var now = new Date();
+    if (!play) {
+      play = true;
+      startTime = now.getTime();
+    }
+    if (now.getTime() - startTime > 20000) {
+      element.checked = !element.checked;
+      return;
+    }
+    if (element.checked) total++;
+    else total--;
+    element.form.num.value = total;
+  }
+  function restart(form) {
+    total = 0;
+    play = false;
+    for (var i = 1; i <= 100; ++i) {
+      form.elements[i].checked = false;
+    }
+  }
+</script>
+<center>Test your skill. How many boxes can you check in 20 seconds?</center>
+<script language="JavaScript">
+  document.write("<FORM><CENTER>");
+  document.write('<INPUT TYPE="text" VALUE="0" ');
+  document.write('NAME="num" SIZE=10 onFocus="this.blur()"><BR>');
+  document.write("<HR SIZE=1 WIDTH=40%>");
+  for (var i = 0; i < 10; ++i) {
+    for (var j = 0; j < 10; ++j) {
+      document.write('<INPUT TYPE="checkbox" ');
+      document.write('onClick="display(this)">');
+    }
+    document.write("<BR>");
+  }
+  document.write("<HR SIZE=1 WIDTH=40%>");
+  document.write('<INPUT TYPE="button" VALUE="restart" ');
+  document.write('onClick="restart(this.form)">');
+  document.write("</CENTER></FORM>");
+</script>
 
 </div>
 

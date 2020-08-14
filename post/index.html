@@ -1,22 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ŝalenzo</title>
-    <meta charset="utf-8">
-    <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/lobby.css">
-    <link rel="stylesheet" href="../assets/css/syntax.css">
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-        type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                tex2jax: {
-                skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-                inlineMath: [['$','$']]
-                }
-            });
-    </script>
+  <title>Ŝalenzo</title>
+  <meta charset="utf-8" />
+  <link rel="icon" href="../assets/img/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="../assets/css/main.css" />
+  <link rel="stylesheet" href="../assets/css/lobby.css" />
+  <link rel="stylesheet" href="../assets/css/syntax.css" />
+  <script
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    type="text/javascript"
+  ></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        inlineMath: [['$','$']]
+        }
+    });
+  </script>
+  <script>
+    (function () {
+      var oDiv = document.getElementsByClassName("rightcolumn");
+      var H = 0,
+        iE6;
+      var Y = oDiv;
+      while (Y) {
+        H += Y.offsetTop;
+        Y = Y.offsetParent;
+      }
+      iE6 = window.ActiveXObject && !window.XMLHttpRequest;
+      if (!iE6) {
+        window.οnscrοll = function () {
+          var s = document.body.scrollTop || document.documentElement.scrollTop;
+          if (s > H) {
+            oDiv.className = "rightcolumn";
+            if (iE6) {
+              oDiv.style.top = s - H + "px";
+            }
+          } else {
+            oDiv.className = "";
+          }
+        };
+      }
+    })();
+  </script>
 </head>
 
   <body>
