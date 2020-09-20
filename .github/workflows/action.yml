@@ -4,12 +4,12 @@ on:
     - cron: "0 16 * * *"
   workflow_dispatch:
 jobs:
-  啊:
+  aaaaaa:
     runs-on: ubuntu-latest
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-      - name: 啊啊啊
+      - name: aaaaaaaaaaaa
         run: |
           cd "$GITHUB_WORKSPACE"
           echo "字数统计：README.md有$(cat "README.md" | wc -m)个字符。"
