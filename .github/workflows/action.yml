@@ -2,6 +2,7 @@ name: GitHubにできることはまだあるかい
 on:
   schedule:
     - cron: "0 16 * * *"
+  workflow_dispatch:
 jobs:
   啊:
     runs-on: ubuntu-latest
