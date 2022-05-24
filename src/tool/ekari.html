@@ -22,6 +22,6 @@ moeto idibi ma widoma mepija ka benomi 343
 <input type=number min=1 max=540 step=1 value=343 id=inputX>
 <output id=outputY></output>
 <script>
-outputY.textContent=
+inputX.oninput=()=>outputY.textContent=
 (f=(g,ena,wija,wido,wi,idibi,benomi,pituwo,waroewo,ije,h)=>(wi=g/10|0,h=g/60|0,g%60)?g<10?ena[g]:g<60?(g%10?ena[g%10]+"ma ":"")+wija[wi]+(g%10-9?"":" (= ije "+wija[-~wi]+")"):g>120?"moeto "+ena[h]+" ma "+f(g%60,ena,wija)+" ka "+ena[-~h]:f(g-60,ena,wija)+" daemita moeto":g-60?"moeto "+ena[h]:wija[6])(+inputX.value,([]+f).split([]+[,,]),",rati,mepina,joka rati,mepija,rati beo,moeto".split(","))
 </script>
