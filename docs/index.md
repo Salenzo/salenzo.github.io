@@ -1,17 +1,11 @@
-# Welcome to MkDocs
+# MkDocs Basic Theme
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This is a very basic theme for MkDocs with the goal of demonstrating all of
+the features with minimal HTML and CSS.
 
-## Commands
+## Adapting this theme
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+If you want to use this theme as a base to create your own, it is best to
+download or fork the theme and start to modify it
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+Make sure you read the MkDocs documentation regarding writing custom themes.

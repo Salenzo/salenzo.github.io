@@ -1,1 +1,5 @@
-site_name: My Docs
+site_name: Ŝalenzo
+theme:
+  name: null
+  custom_dir: src
+repo_url: https://github.com/Salenzo/salenzo.readthedocs.io
