@@ -13,8 +13,5 @@ build:
     post_build:
     - echo "Command run at 'post_build' step"
     - echo `date`
-  commands:
-  - echo "Hello World" > _readthedocs/html/index.html
-  - echo "Custom 404 page" > _readthedocs/html/404.html
 mkdocs:
   configuration: mkdocs.yml
