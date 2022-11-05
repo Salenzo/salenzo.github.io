@@ -10,11 +10,11 @@ build:
   jobs:
     pre_create_environment:
     - echo "Command run at 'pre_create_environment' step"
-    commands:
-    - echo "Hello World" > _readthedocs/html/index.html
-    - echo "Custom 404 page" > _readthedocs/html/404.html
     post_build:
     - echo "Command run at 'post_build' step"
     - echo `date`
+  commands:
+  - echo "Hello World" > _readthedocs/html/index.html
+  - echo "Custom 404 page" > _readthedocs/html/404.html
 mkdocs:
   configuration: mkdocs.yml
