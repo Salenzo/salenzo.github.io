@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>{% if page.title %}{{ page.title }} — {% endif %}{{ config.site_name }}</title>
+<link rel="shortcut icon" href="{{ 'favicon.png' | url }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ 'theme.css' | url }}">
+{% block extrahead %}
+{% endblock %}
+
+<nav>
+  {% for nav_item in nav %}
+  <a href="{{ nav_item.url | url }}">{{ nav_item.title }}</a>
+  {% endfor %}
+</nav>
+
+<main>
+  {% block content %}
+  {{ page.content }}
+  {% endblock %}
+</main>
+
+<aside>
+  <h1>About us</h1>
+  <a href="https://github.com/akhialomgir">シュサイ Akhia</a>
+  <a href="https://github.com/satgo1546">シュサイ satgo1546</a>
+  <a href="https://github.com/Ezioxk">シュサイ Ezioxk</a>
+  <a href="http://mochanaigai363.lofter.com">アート Flora</a>
+  <a href="https://github.com/Salenzo" class="more">more »</a>
+</aside>
+
+{% if not page.is_homepage %}
+{% if page and page.edit_url %}
+<a href="{{ page.edit_url }}">View source</a>
+{% elif config.repo_url %}
+<a href="{{ config.repo_url }}">{{ config.repo_name }}</a>
+{% endif %}
+{% endif %}
+
+<footer>
+  {% block footer %}
+  Copyright © Ŝalenzo<br>
+  Powered by Ŝanity & <a href="https://www.mkdocs.org">MkDocs</a> {{ mkdocs_version }}
+  {% endblock %}
+</footer>

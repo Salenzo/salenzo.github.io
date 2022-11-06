@@ -1,6 +1,20 @@
 site_name: Ŝalenzo
+site_url: https://salenzo.readthedocs.io/
+repo_url: https://github.com/Salenzo/salenzo.readthedocs.io
+edit_uri_template: "blob/main/docs/{path}"
+nav:
+- Home: index.md
+- Post: post/index.md
+- Tool: tool/index.md
+- Game: game/index.md
+- About: about.md
+- Metsubō Jinrai: https://metsubojinrai.top/
 theme:
   name: null
-  custom_dir: src
-repo_url: https://github.com/Salenzo/salenzo.readthedocs.io
+  custom_dir: layouts
+docs_dir: src
+site_dir: _site
 plugins: []
+markdown_extensions:
+  nl2br: {}
+  sane_lists: {}

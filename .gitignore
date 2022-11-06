@@ -1,3 +1,2 @@
-site/
-dist/
+_site/
 *.pyc
