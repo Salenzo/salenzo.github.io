@@ -1,0 +1,79 @@
+code {
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  tab-size: 2em;
+  hyphens: none;
+  /* 在所有代码上设置样式看上去十分离谱，但是想到代码高亮由JavaScript完成，倒也没那么离谱。 */
+  font-style: italic;
+}
+
+.language-css,
+.language-less,
+.language-sass,
+.language-scss,
+.token {
+  font-style: normal;
+}
+
+/* Operators get monospace because they usually come with centered asterisks… */
+.language-markup,
+.language-html,
+.language-xml,
+.language-svg,
+.language-mathml,
+.language-ssml,
+.language-atom,
+.language-rss,
+.language-tex,
+.token.operator,
+.token.char,
+.token.string,
+.token.regex,
+.token.url {
+  font-family: "Fira Mono", monospace, monospace;
+  font-style: normal;
+}
+
+.token.atrule>.token.rule,
+.token.keyword,
+.token.boolean,
+.token.important,
+.token.tag,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.constant,
+.token.variable,
+.token.lambda-parameter,
+.token.function,
+.token.class-name,
+.token.content,
+.token.italic {
+  font-style: italic;
+}
+
+.token.attr-name,
+.token.attr-value {
+  font-weight: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype {
+  color: #888;
+}
+
+.token.inserted {
+  color: #690;
+}
+
+.token.deleted {
+  color: #b05;
+}
+
+.token.entity {
+  text-decoration: dotted underline;
+  cursor: help;
+}

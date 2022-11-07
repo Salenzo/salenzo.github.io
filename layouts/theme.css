@@ -43,6 +43,15 @@ hr {
   border-top: 1px solid currentcolor;
 }
 
+pre,
+code {
+  font-family: inherit;
+}
+
+pre {
+  margin: 1em 2em;
+}
+
 a {
   text-decoration: none;
   color: #3692e7;
