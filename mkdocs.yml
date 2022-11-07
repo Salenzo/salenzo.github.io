@@ -1,7 +1,7 @@
 site_name: Ŝalenzo
 site_url: https://salenzo.readthedocs.io/
 repo_url: https://github.com/Salenzo/salenzo.readthedocs.io
-edit_uri_template: "blob/main/docs/{path}"
+edit_uri_template: "blob/main/src/{path}"
 nav:
 - Home: index.md
 - Post: post/index.md
@@ -14,6 +14,8 @@ theme:
   custom_dir: layouts
 docs_dir: src
 site_dir: _site
+hooks:
+- hooks.py
 plugins: []
 markdown_extensions:
   nl2br: {}
