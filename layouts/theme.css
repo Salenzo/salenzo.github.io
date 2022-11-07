@@ -40,7 +40,7 @@ h3 {
 
 hr {
   border: 0;
-  border-top: 1px solid currentcolor;
+  border-top: 1px solid #666;
 }
 
 pre,
@@ -115,11 +115,29 @@ aside>a {
   font-weight: bold;
 }
 
+dl.meta {
+  display: grid;
+  grid-template-columns: 6em 1fr;
+  font-size: .9em;
+}
+
+dl.meta>dt {
+  font-weight: bold;
+}
+
+dl.meta>dt::after {
+  content: ":";
+}
+
+dl.meta>dd {
+  margin: 0;
+}
+
 .more {
   display: block;
   color: #999;
   text-align: right;
-  font-size: .9em;
+  font-size: .75em;
   font-weight: normal;
 }
 

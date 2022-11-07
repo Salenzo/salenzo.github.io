@@ -23,19 +23,28 @@
 </nav>
 
 <main>
+  {% if page.meta %}
+  <dl class="meta">
+    {% for key, value in page.meta.items() %}
+    <dt>{{ key }}</dt>
+    <dd>{{ value }}</dd>
+    {% endfor %}
+  </dl>
+  <hr>
+  {% endif %}
   {% block content %}
   {{ page.content }}
   {% endblock %}
   <hr>
   <small class="more">
-  {% if not page.is_homepage %}
-  {% if page and page.edit_url %}
-  <a href="{{ page.edit_url }}">View source</a>
-  {% elif config.repo_url %}
-  <a href="{{ config.repo_url }}">{{ config.repo_name }}</a>
-  {% endif %}
-  {% endif %}
-</small>
+    {% if not page.is_homepage %}
+    {% if page and page.edit_url %}
+    <a href="{{ page.edit_url }}">View source</a>
+    {% elif config.repo_url %}
+    <a href="{{ config.repo_url }}">{{ config.repo_name }}</a>
+    {% endif %}
+    {% endif %}
+  </small>
 </main>
 
 <aside>
