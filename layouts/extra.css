@@ -16,7 +16,7 @@ code {
   font-style: normal;
 }
 
-/* Operators get monospace because they usually come with centered asterisks… */
+code:not([class*="language-"]),
 .language-markup,
 .language-html,
 .language-xml,
@@ -26,11 +26,13 @@ code {
 .language-atom,
 .language-rss,
 .language-tex,
+/* Operators get monospace because monospace fonts usually come with centered asterisks… */
 .token.operator,
 .token.char,
 .token.string,
 .token.regex,
-.token.url {
+.token.url,
+[mathvariant="monospace"] {
   font-family: "Fira Mono", monospace, monospace;
   font-style: normal;
 }

@@ -20,3 +20,5 @@ plugins: []
 markdown_extensions:
   nl2br: {}
   sane_lists: {}
+  mdx_math:
+    enable_dollar_delimiter: true

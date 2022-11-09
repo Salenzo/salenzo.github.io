@@ -1,4 +1,7 @@
-def on_page_markdown(markdown, page, config, files):
+import subprocess
+
+
+def on_page_markdown(markdown: str, page, config, files):
     if not page.is_homepage and page.file.src_uri.endswith("/index.md"):
         items = sorted(
             "- [%s](%s)"
@@ -15,3 +18,13 @@ def on_page_markdown(markdown, page, config, files):
             items = reversed(items)
         markdown += "\n\n" + "\n".join(items)
     return markdown
+
+
+def on_page_content(html: str, page, config, files):
+    return subprocess.run(
+        ["node", "tex2mml-page.mjs"],
+        check=True,
+        input=html,
+        encoding="utf-8",
+        stdout=subprocess.PIPE,
+    ).stdout
