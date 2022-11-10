@@ -10,6 +10,6 @@ build:
     nodejs: "18"
   jobs:
     post_install:
-    - npm install mathjax@3.2.2
+    - npm install mathjax-full@3.2.2
 mkdocs:
   configuration: mkdocs.yml
