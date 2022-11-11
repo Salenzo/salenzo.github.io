@@ -42,43 +42,43 @@ math[display="block" i] {
 }
 
 [mathcolor="olive"] {
-   color: olive;
+  color: olive;
 }
 
 [mathcolor="purple"] {
-   color: purple;
+  color: purple;
 }
 
 [mathcolor="teal"] {
-   color: teal;
+  color: teal;
 }
 
 [mathcolor="aqua"] {
-   color: aqua;
+  color: aqua;
 }
 
 [mathcolor="gray"] {
-   color: gray;
+  color: gray;
 }
 
 [mathbackground="blue"] {
-   background-color: blue;
+  background-color: blue;
 }
 
 [mathbackground="green"] {
-   background-color: green;
+  background-color: green;
 }
 
 [mathbackground="white"] {
-   background-color: white;
+  background-color: white;
 }
 
 [mathbackground="yellow"] {
-   background-color: yellow;
+  background-color: yellow;
 }
 
 [mathbackground="aqua"] {
-   background-color: aqua;
+  background-color: aqua;
 }
 
 [mathvariant="normal"],
@@ -86,18 +86,12 @@ math[display="block" i] {
   font-style: normal;
 }
 
-[mathvariant="bold"],
-[mathvariant="bold-italic"],
-[mathvariant="bold-sans-serif"],
-[mathvariant="sans-serif-bold-italic"] {
+[mathvariant*="bold"] {
   font-weight: bold;
   font-style: normal;
 }
 
-[mathvariant="italic"],
-[mathvariant="bold-italic"],
-[mathvariant="sans-serif-italic"],
-[mathvariant="sans-serif-bold-italic"] {
+[mathvariant$="italic"] {
   font-style: italic;
 }
 
@@ -110,94 +104,104 @@ mo:empty {
   margin: 0;
 }
 
-mo[data-content="("],
-mo[data-content=")"],
-mo[data-content="["],
-mo[data-content="]"],
-mo[data-content="{"],
-mo[data-content="}"] {
+mo[data-content="("]:not([stretchy="false"]),
+mo[data-content=")"]:not([stretchy="false"]),
+mo[data-content="["]:not([stretchy="false"]),
+mo[data-content="]"]:not([stretchy="false"]),
+mo[data-content="{"]:not([stretchy="false"]),
+mo[data-content="}"]:not([stretchy="false"]) {
   margin: 0;
   width: .5em;
+  align-self: stretch;
   text-indent: -9999px;
 }
 
-mo[data-content="("] {
+mo[data-content="("]:not([stretchy="false"]) {
+  margin: 0 -.12em 0 .08em;
   border-radius: 100% 0 0 100% / 50% 0 0 50%;
   border: .05em solid transparent;
   border-left: .125em solid currentcolor;
   border-right-style: none;
 }
 
-mo[data-content=")"] {
+mo[data-content=")"]:not([stretchy="false"]) {
+  margin: 0 .08em 0 -.12em;
   border-radius: 0 100% 100% 0 / 0 50% 50% 0;
   border: .05em solid transparent;
   border-left-style: none;
   border-right: .125em solid currentcolor;
 }
 
-mo[data-content="["] {
+mo[data-content="["]:not([stretchy="false"]) {
+  width: .3em;
+  margin-left: .1em;
   border: .08em solid currentcolor;
   border-right-style: none;
 }
 
-mo[data-content="]"] {
+mo[data-content="]"]:not([stretchy="false"]) {
+  width: .3em;
+  margin-right: .1em;
   border: .08em solid currentcolor;
   border-left-style: none;
 }
 
-mo[data-content="{"],
-mo[data-content="}"] {
+mo[data-content="{"]:not([stretchy="false"]),
+mo[data-content="}"]:not([stretchy="false"]) {
   position: relative;
   border: .08em solid currentcolor;
 }
 
-mo[data-content="{"] {
+mo[data-content="{"]:not([stretchy="false"]) {
+  margin-left: .08em;
   border-radius: 100% 0 0 100% / .5em 0 0 .5em;
   border-left: .1em solid transparent;
   border-right-style: none;
 }
 
-mo[data-content="}"] {
+mo[data-content="}"]:not([stretchy="false"]) {
+  margin-right: .08em;
   border-radius: 0 100% 100% 0 / 0 .5em .5em 0;
   border-left-style: none;
   border-right: .1em solid transparent;
 }
 
-mo[data-content="{"]::before,
-mo[data-content="{"]::after,
-mo[data-content="}"]::before,
-mo[data-content="}"]::after {
+mo[data-content="{"]:not([stretchy="false"])::before,
+mo[data-content="{"]:not([stretchy="false"])::after,
+mo[data-content="}"]:not([stretchy="false"])::before,
+mo[data-content="}"]:not([stretchy="false"])::after {
   content: "";
   position: absolute;
   border: solid currentcolor;
 }
 
-mo[data-content="{"]::before {
+mo[data-content="{"]:not([stretchy="false"])::before {
   inset: .05em 50% 50% -.1em;
   border-bottom-right-radius: 100% .25em;
   border-width: 0 .125em .04em 0;
 }
 
-mo[data-content="{"]::after {
+mo[data-content="{"]:not([stretchy="false"])::after {
   inset: 50% 50% .05em -.1em;
   border-top-right-radius: 100% .25em;
   border-width: .04em .125em 0 0;
 }
 
-mo[data-content="}"]::before {
+mo[data-content="}"]:not([stretchy="false"])::before {
   inset: .05em -.1em 50% 50%;
   border-bottom-left-radius: 100% .25em;
   border-width: 0 0 .04em .125em;
 }
 
-mo[data-content="}"]::after {
+mo[data-content="}"]:not([stretchy="false"])::after {
   inset: 50% -.1em .05em 50%;
   border-top-left-radius: 100% .25em;
   border-width: .04em 0 0 .125em;
 }
 
-mo[data-content="|"]{
+mo[data-content="|"]:not([stretchy="false"]) {
   width: .08em;
+  align-self: stretch;
   text-indent: -9999px;
   background-color: currentcolor;
 }
@@ -205,23 +209,27 @@ mo[data-content="|"]{
 mrow,
 mstyle {
   display: inline-flex;
+  align-items: baseline;
 }
 
 mfrac {
   display: inline-flex;
   flex-direction: column;
-}
+  margin: 0 .2em;
 
-mfrac>* {
-  padding: 0 1px;
-}
+  &>* {
+    padding: 0 1px;
+  }
 
-mfrac:not([linethickness="0"])>:first-child {
-  box-shadow: 0 .04em currentcolor;
-}
+  &:not([linethickness="0"]) {
+    &>:first-child {
+      box-shadow: 0 .04em currentcolor;
+    }
 
-mfrac:not([linethickness="0"])>:last-child {
-  box-shadow: 0 -.04em currentcolor;
+    &>:last-child {
+      box-shadow: 0 -.04em currentcolor;
+    }
+  }
 }
 
 msqrt::before,

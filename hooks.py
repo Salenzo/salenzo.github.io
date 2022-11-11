@@ -28,3 +28,6 @@ def on_page_content(html: str, page, config, files):
         encoding="utf-8",
         stdout=subprocess.PIPE,
     ).stdout
+
+def on_post_build(config):
+    subprocess.run(["sass", "--style=compressed", "--no-source-map", config.site_dir])
