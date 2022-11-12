@@ -1,0 +1,20 @@
+title: Ŝalenzo
+baseurl: ""
+url: https://salenzo.github.io
+timezone: Asia/Shanghai
+source: src
+future: true
+plugins: # https://pages.github.com/versions.json
+- jekyll-relative-links
+- jekyll-optional-front-matter
+- jekyll-default-layout
+- jekyll-titles-from-headings
+kramdown:
+  input: GFM
+  hard_wrap: true
+  entity_output: as_input
+  smart_quotes: [apos, apos, quot, quot]
+  show_warnings: true
+sass:
+  sass_dir: _sass
+  style: compressed

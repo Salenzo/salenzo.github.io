@@ -1,5 +1,7 @@
-_site
-.sass-cache
+_site/
 node_modules
-_drafts
 *.css.map
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor/
