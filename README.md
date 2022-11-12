@@ -1,2 +1,3 @@
-- salenzo.github.io — Ŝalenzo Website
-- salenzo.readthedocs.io — Ŝalenzo Website (2)
+- [salenzo.github.io — Ŝalenzo Website ![GitHub Pages workflow](https://github.com/Salenzo/salenzo.github.io/actions/workflows/jekyll-gh-pages.yml/badge.svg)](https://salenzo.github.io/)
+- [salenzo.readthedocs.io — Ŝalenzo Website (2) ![Documentation Status](https://readthedocs.org/projects/salenzo/badge/?version=latest)](https://salenzo.readthedocs.io/)
+- [salenzo.neocities.org — Ŝalenzo Website (3) ![Gem](https://img.shields.io/gem/v/neocities?label=gem%20install%20neocities&logo=ruby)](https://salenzo.neocities.org/)
