@@ -1,2 +1,2 @@
-# salenzo.readthedocs.io
-Ŝalenzo Website (2)
+- salenzo.github.io — Ŝalenzo Website
+- salenzo.readthedocs.io — Ŝalenzo Website (2)

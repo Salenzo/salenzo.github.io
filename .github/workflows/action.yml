@@ -1,0 +1,17 @@
+name: GitHubにできることはまだあるかい
+on:
+  schedule:
+    - cron: "19 19 8-10 * *"
+  workflow_dispatch:
+jobs:
+  aaaaaa:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: aaaaaaaaaaaa
+        run: |
+          # 一些bash命令。
+          cd "$GITHUB_WORKSPACE"
+          echo "字数统计：README.md有$(cat "README.md" | wc -m)个字符。"
+          echo いいよ、こいよ！

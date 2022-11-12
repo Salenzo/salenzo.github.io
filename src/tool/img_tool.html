@@ -1,0 +1,139 @@
+<title>Ŝalenzo Alvocat image converter II</title>
+<style>
+  #image_converter_canvas {
+    display: none;
+  }
+
+  #image_converter_output {
+    display: block;
+    width: 100%;
+  }
+
+  #image_converter_log {
+    background-image: linear-gradient(orange, red);
+    color: white;
+  }
+</style>
+<p><small>Version 2.00</small></p>
+ <br></br>
+<div>
+  <input
+    type="radio"
+    id="image_converter_grayscale"
+    name="image_converter_color_mode"
+    checked
+  /><label for="image_converter_grayscale">G-0-64-160-224-256</label>
+  <br></br>
+  <input
+    type="radio"
+    id="image_converter_monochrome"
+    name="image_converter_color_mode"
+  /><label for="image_converter_monochrome">G-0-128-256</label>
+</div>
+  <br></br>
+<div id="btn" title="upload">
+  <input
+    type="file"
+    class="file"
+    id="image_converter_input"
+    accept="image/*"
+    multiple
+  />
+</div>
+  <br></br>
+<div><output id="image_converter_log"></output></div>
+<canvas width="800" height="600" id="image_converter_canvas"></canvas>
+<textarea id="image_converter_output" readonly rows="24"></textarea>
+<script>
+  function pad_or_cut(x, width) {
+    // Not the best solution, but what are you looking for in JavaScript?
+    return ("000000000000000000000000000000000000000000000000" + x).slice(
+      -width
+    );
+  }
+  var ctx = image_converter_canvas.getContext("2d");
+  var img = document.createElement("img");
+  var files;
+  image_converter_input.onchange = function (event) {
+    if (event.target.files.length > 0) {
+      files = event.target.files;
+      img.src = URL.createObjectURL(files[0]);
+      img.my_index = 0;
+      image_converter_output.value = "";
+      image_converter_log.innerHTML = "";
+    }
+  };
+  img.onload = function () {
+    var w = img.width;
+    var h = img.height;
+    var dy = 0;
+    var ppw = image_converter_grayscale.checked ? 16 : 32; // pixels per word
+    var bpp = image_converter_grayscale.checked ? 2 : 1; // bits per pixel
+    if (w > 800 || h > 600) {
+      image_converter_log.innerHTML +=
+        "Error: the specified image " +
+        files[img.my_index].name +
+        " is too big<br>";
+    } else {
+      if (h & (ppw - 1)) {
+        image_converter_log.innerHTML +=
+          "Warning: the height of " +
+          files[img.my_index].name +
+          " is not a multiple of " +
+          ppw +
+          "; white pixels will be padded at the top<br>";
+        dy = h & (ppw - 1);
+        h |= ppw - 1;
+        h++;
+      }
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, 800, 600);
+      ctx.drawImage(img, 0, dy);
+      var data = ctx.getImageData(0, 0, w, h).data;
+      var s =
+        "// " + files[img.my_index].name + "\n// " + w + " × " + h + "px\n";
+      h = Math.ceil(h / ppw);
+      s += "static const uint32_t IMAGE[" + w + "][" + h + "] = {\n\t";
+      var x, y1, y2, y, b, c;
+      for (x = 0; x < w; x++) {
+        for (y1 = 0; y1 < h; y1++) {
+          b = "";
+          for (y2 = 0; y2 < ppw; y2++) {
+            y = h * ppw - 1 - (y1 * ppw + y2);
+            c = data[(y * w + x) * 4 + 1];
+            if (bpp == 2) {
+              if (c < 64) {
+                c = 3;
+              } else if (c < 160) {
+                c = 2;
+              } else if (c < 224) {
+                c = 1;
+              } else {
+                c = 0;
+              }
+            } else {
+              if (c < 128) {
+                c = 1;
+              } else {
+                c = 0;
+              }
+            }
+            b = c + b;
+          }
+          console.log(b);
+          b = parseInt(b, 1 << bpp)
+            .toString(16)
+            .toLowerCase();
+          s += "0x" + pad_or_cut(b, 8) + ", ";
+        }
+        s = s.slice(0, s.length - 1) + "\n\t";
+      }
+      s = s.slice(0, s.length - 1) + "};\n\n";
+      image_converter_output.value += s;
+    }
+    if (img.my_index < files.length - 1) {
+      img.my_index++;
+      img.src = URL.createObjectURL(files[img.my_index]);
+    }
+  };
+</script>

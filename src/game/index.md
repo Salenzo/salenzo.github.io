@@ -1,1 +1,3 @@
 # Game
+
+- [puzzle](puzzle.html)

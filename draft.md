@@ -1,0 +1,23 @@
+# 狡兔十八窟 ~静态网页免费建站服务测评~
+
+最后更新日：2022年11月12日
+
+功能 | [GitHub Pages](https://pages.github.com/) | [Cloudflare Pages](https://pages.cloudflare.com/) | [Netlify](https://www.netlify.com/) | [GitLab Pages](https://docs.gitlab.com/ee/user/project/pages/) | [Read the Docs](https://readthedocs.io/) | [Neocities](https://neocities.org/)
+-|-|-|-|-|-|-
+免费域名 | `*.github.io` | `*.pages.dev` | `*.netlify.app` | `*.gitlab.io` | `*.readthedocs.io`；附送`*.rtfd.io` | `*.neocities.io`
+使用自购域名 | ✓ | ✓ | ✓ | ✓ | ✓ | —
+版本控制 | ✔ | ✓ | ✓ | ✔ | ✔ | —
+存储 | 1 GB | [20000文件；25 MB/文件](https://developers.cloudflare.com/pages/platform/limits/) | ∞ | [10 GB](https://docs.gitlab.com/ee/user/gitlab_com/index.html#account-and-limit-settings) | ? | [1 GB](https://neocities.org/supporter)
+流量 | [~100 GB/月](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#usage-limits) | ∞ | 100 GB/月 | ? | ? | ~200 GB
+持续集成 | [6小时/次；~10次/小时](https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration) | 20分钟/次；500次/月 | 300分钟/月 | 400分钟/月 | [15分钟/次](https://docs.readthedocs.io/en/stable/builds.html) | —
+生成器偏好 | Jekyll | 任意 | 任意 | 任意 | Sphinx和MkDocs | 原生
+
+— = 不可用；✓ = 可用；✔ = 强制
+
+标注为∞的项目可能受到其他因素制约。
+
+Read the Docs在HTTP标头中指示页面缓存一天，因此不强制刷新就无法看到最新更改。
+
+2021年5月17日后注册的GitLab账户需要绑定银行卡才可免费使用GitLab Pages服务（以及所有需要使用公用持续集成实例的功能）。
+
+虽然Neocities不提供版本控制集成和持续集成，但提供命令行和REST API。Neocities禁止将资源用于外链，且[限制文件扩展名](https://neocities.org/site_files/allowed_types)为建站资源，特别是不允许可执行文件和压缩包，也不允许上传视频和音乐。
