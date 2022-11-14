@@ -9,29 +9,11 @@
   href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap"
   rel="stylesheet" media="print" onload="this.media = 'all'">
 <link rel="stylesheet" href="{{ 'theme.css' | url }}">
-<link rel="stylesheet" href="{{ 'extra.css' | url }}" media="print" onload="this.media = 'all'">
-<link rel="stylesheet" href="{{ 'mathml.css' | url }}" id="mathMLStyleSheet" disabled>
+<link rel="stylesheet" href="{{ 'mathml.css' | url }}">
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 {% block extrahead %}
 {% endblock %}
-
-<div style="clip: rect(0 0 0 0); width: 1px; height: 1px; margin: -1px; overflow: hidden; position: absolute;">
-  <math xmlns="http://www.w3.org/1998/Math/MathML">
-    <mspace id="mathMLTest" width="77px" height="23px"></mspace>
-  </math>
-</div>
-
-<script>
-  // https://fred-wang.github.io/mathml.css/mspace.js
-  const link = document.getElementById("mathMLStyleSheet")
-  const box = document.getElementById("mathMLTest").getBoundingClientRect()
-  if (Math.abs(box.width - 77) > 1 || Math.abs(box.height - 23) > 1) {
-    link.disabled = false
-  } else {
-    link.remove()
-  }
-</script>
 
 <nav>
   <a href="{{ nav.homepage.url | url }}">{{ config.site_name }}</a>

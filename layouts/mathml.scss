@@ -1,281 +1,255 @@
+@use "sass:string";
 @namespace url("http://www.w3.org/1998/Math/MathML");
 
-math {
-  display: inline-flex;
-  align-items: baseline;
-  text-indent: 0;
-  letter-spacing: normal;
-  word-spacing: normal;
-  font-weight: normal;
-  font-style: normal;
-  --math-style: compact;
-}
-
-math[display="block" i] {
-  display: flex;
-  justify-content: center;
-  --math-style: normal;
-}
-
-[displaystyle] {
-  --math-style: normal;
-}
-
-[displaystyle="false"] {
-  --math-style: compact;
-}
-
-[mathcolor="green"] {
-  color: green;
-}
-
-[mathcolor="black"] {
-  color: black;
-}
-
-[mathcolor="red"] {
-  color: red;
-}
-
-[mathcolor="blue"] {
-  color: blue;
-}
-
-[mathcolor="olive"] {
-  color: olive;
-}
-
-[mathcolor="purple"] {
-  color: purple;
-}
-
-[mathcolor="teal"] {
-  color: teal;
-}
-
-[mathcolor="aqua"] {
-  color: aqua;
-}
-
-[mathcolor="gray"] {
-  color: gray;
-}
-
-[mathbackground="blue"] {
-  background-color: blue;
-}
-
-[mathbackground="green"] {
-  background-color: green;
-}
-
-[mathbackground="white"] {
-  background-color: white;
-}
-
-[mathbackground="yellow"] {
-  background-color: yellow;
-}
-
-[mathbackground="aqua"] {
-  background-color: aqua;
-}
-
-[mathvariant="normal"],
-[mathvariant="monospace"] {
-  font-style: normal;
-}
-
-[mathvariant*="bold"] {
-  font-weight: bold;
-  font-style: normal;
-}
-
-[mathvariant$="italic"] {
-  font-style: italic;
-}
-
-mo {
-  margin: 0 .25em;
-}
-
-mo+mo,
-mo:empty {
-  margin: 0;
-}
-
-mo[data-content="("]:not([stretchy="false"]),
-mo[data-content=")"]:not([stretchy="false"]),
-mo[data-content="["]:not([stretchy="false"]),
-mo[data-content="]"]:not([stretchy="false"]),
-mo[data-content="{"]:not([stretchy="false"]),
-mo[data-content="}"]:not([stretchy="false"]) {
-  margin: 0;
-  width: .5em;
-  align-self: stretch;
-  text-indent: -9999px;
-}
-
-mo[data-content="("]:not([stretchy="false"]) {
-  margin: 0 -.12em 0 .08em;
-  border-radius: 100% 0 0 100% / 50% 0 0 50%;
-  border: .05em solid transparent;
-  border-left: .125em solid currentcolor;
-  border-right-style: none;
-}
-
-mo[data-content=")"]:not([stretchy="false"]) {
-  margin: 0 .08em 0 -.12em;
-  border-radius: 0 100% 100% 0 / 0 50% 50% 0;
-  border: .05em solid transparent;
-  border-left-style: none;
-  border-right: .125em solid currentcolor;
-}
-
-mo[data-content="["]:not([stretchy="false"]) {
-  width: .3em;
-  margin-left: .1em;
-  border: .08em solid currentcolor;
-  border-right-style: none;
-}
-
-mo[data-content="]"]:not([stretchy="false"]) {
-  width: .3em;
-  margin-right: .1em;
-  border: .08em solid currentcolor;
-  border-left-style: none;
-}
-
-mo[data-content="{"]:not([stretchy="false"]),
-mo[data-content="}"]:not([stretchy="false"]) {
-  position: relative;
-  border: .08em solid currentcolor;
-}
-
-mo[data-content="{"]:not([stretchy="false"]) {
-  margin-left: .08em;
-  border-radius: 100% 0 0 100% / .5em 0 0 .5em;
-  border-left: .1em solid transparent;
-  border-right-style: none;
-}
-
-mo[data-content="}"]:not([stretchy="false"]) {
-  margin-right: .08em;
-  border-radius: 0 100% 100% 0 / 0 .5em .5em 0;
-  border-left-style: none;
-  border-right: .1em solid transparent;
-}
-
-mo[data-content="{"]:not([stretchy="false"])::before,
-mo[data-content="{"]:not([stretchy="false"])::after,
-mo[data-content="}"]:not([stretchy="false"])::before,
-mo[data-content="}"]:not([stretchy="false"])::after {
-  content: "";
-  position: absolute;
-  border: solid currentcolor;
-}
-
-mo[data-content="{"]:not([stretchy="false"])::before {
-  inset: .05em 50% 50% -.1em;
-  border-bottom-right-radius: 100% .25em;
-  border-width: 0 .125em .04em 0;
-}
-
-mo[data-content="{"]:not([stretchy="false"])::after {
-  inset: 50% 50% .05em -.1em;
-  border-top-right-radius: 100% .25em;
-  border-width: .04em .125em 0 0;
-}
-
-mo[data-content="}"]:not([stretchy="false"])::before {
-  inset: .05em -.1em 50% 50%;
-  border-bottom-left-radius: 100% .25em;
-  border-width: 0 0 .04em .125em;
-}
-
-mo[data-content="}"]:not([stretchy="false"])::after {
-  inset: 50% -.1em .05em 50%;
-  border-top-left-radius: 100% .25em;
-  border-width: .04em 0 0 .125em;
-}
-
-mo[data-content="|"]:not([stretchy="false"]) {
-  width: .08em;
-  align-self: stretch;
-  text-indent: -9999px;
-  background-color: currentcolor;
-}
-
-mrow,
-mstyle {
-  display: inline-flex;
-  align-items: baseline;
-}
-
-mfrac {
-  display: inline-flex;
-  flex-direction: column;
-  margin: 0 .2em;
-
-  &>* {
-    padding: 0 1px;
+@supports not (math-depth: add(2)) {
+  math {
+    @extend mrow;
+    text-indent: 0;
+    letter-spacing: normal;
+    word-spacing: normal;
+    font-weight: normal;
+    font-style: normal;
+    --math-style: compact;
   }
 
-  &:not([linethickness="0"]) {
-    &>:first-child {
-      box-shadow: 0 .04em currentcolor;
+  math[display="block" i] {
+    display: flex;
+    justify-content: center;
+    --math-style: normal;
+  }
+
+  [displaystyle] {
+    --math-style: normal;
+  }
+
+  [displaystyle="false"] {
+    --math-style: compact;
+  }
+
+  @each $color in aqua,
+  black,
+  blue,
+  fuchsia,
+  gray,
+  green,
+  lime,
+  maroon,
+  navy,
+  olive,
+  purple,
+  red,
+  silver,
+  teal,
+  white,
+  yellow {
+    [mathcolor=#{string.quote("" + $color)}] {
+      color: $color;
     }
 
-    &>:last-child {
-      box-shadow: 0 -.04em currentcolor;
+    [mathbackground=#{string.quote("" + $color)}] {
+      background-color: $color;
     }
   }
-}
 
-msqrt::before,
-mroot::before {
-  content: "\221a";
-}
+  [mathvariant="normal"],
+  [mathvariant="monospace"] {
+    font-style: normal;
+  }
 
-merror {
-  border: 1px solid red;
-}
+  [mathvariant*="bold"] {
+    font-weight: bold;
+    font-style: normal;
+  }
 
-mpadded {}
+  [mathvariant$="italic"] {
+    font-style: italic;
+  }
 
-mphantom {
-  visibility: hidden;
-}
+  mo {
+    margin: 0 .25em;
+  }
 
-msub {}
+  mo+mo,
+  mo:empty {
+    margin: 0;
+  }
 
-msup {}
+  mo:not([stretchy="false"]) {
+    %stretchy {
+      margin: 0;
+      width: .5em;
+      align-self: stretch;
+      text-indent: -9999px;
+    }
 
-msubsup {}
+    &[data-content="("] {
+      @extend %stretchy;
+      margin: 0 -.12em 0 .08em;
+      border-radius: 100% 0 0 100% / 50% 0 0 50%;
+      border: .05em solid transparent;
+      border-left: .125em solid currentcolor;
+      border-right-style: none;
+    }
 
-munder {}
+    &[data-content=")"] {
+      @extend %stretchy;
+      margin: 0 .08em 0 -.12em;
+      border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+      border: .05em solid transparent;
+      border-left-style: none;
+      border-right: .125em solid currentcolor;
+    }
 
-mover {}
+    &[data-content="["] {
+      @extend %stretchy;
+      width: .3em;
+      margin-left: .1em;
+      border: .08em solid currentcolor;
+      border-right-style: none;
+    }
 
-munderover {}
+    &[data-content="]"] {
+      @extend %stretchy;
+      width: .3em;
+      margin-right: .1em;
+      border: .08em solid currentcolor;
+      border-left-style: none;
+    }
 
-mmultiscripts {}
+    &[data-content="{"],
+    &[data-content="}"] {
+      @extend %stretchy;
+      position: relative;
+      border: .08em solid currentcolor;
 
-mmultiscripts>* {}
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        border: solid currentcolor;
+      }
+    }
 
-mmultiscripts>mprescripts~* {}
+    &[data-content="{"] {
+      @extend %stretchy;
+      margin-left: .08em;
+      border-radius: 100% 0 0 100% / .5em 0 0 .5em;
+      border-left: .1em solid transparent;
+      border-right-style: none;
 
-mtable {
-  display: inline-table;
-  --math-style: compact;
-}
+      &::before {
+        inset: .05em 50% 50% -.1em;
+        border-bottom-right-radius: 100% .25em;
+        border-width: 0 .125em .04em 0;
+      }
 
-mtr {
-  display: table-row;
-}
+      &::after {
+        inset: 50% 50% .05em -.1em;
+        border-top-right-radius: 100% .25em;
+        border-width: .04em .125em 0 0;
+      }
+    }
 
-mtd {
-  display: table-cell;
-  text-align: center;
-  padding: 0.5ex 0.4em;
+    &[data-content="}"] {
+      @extend %stretchy;
+      margin-right: .08em;
+      border-radius: 0 100% 100% 0 / 0 .5em .5em 0;
+      border-left-style: none;
+      border-right: .1em solid transparent;
+
+      &::before {
+        inset: .05em -.1em 50% 50%;
+        border-bottom-left-radius: 100% .25em;
+        border-width: 0 0 .04em .125em;
+      }
+
+      &::after {
+        inset: 50% -.1em .05em 50%;
+        border-top-left-radius: 100% .25em;
+        border-width: .04em 0 0 .125em;
+      }
+    }
+
+
+    &[data-content="|"] {
+      @extend %stretchy;
+      margin: .18em;
+      width: .08em;
+      background-color: currentcolor;
+    }
+  }
+
+  mrow,
+  mstyle {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  mfrac {
+    display: inline-flex;
+    flex-direction: column;
+    margin: 0 .2em;
+
+    &>* {
+      padding: 0 1px;
+    }
+
+    &:not([linethickness="0"]) {
+      &>:first-child {
+        box-shadow: 0 .04em currentcolor;
+      }
+
+      &>:last-child {
+        box-shadow: 0 -.04em currentcolor;
+      }
+    }
+  }
+
+  msqrt::before,
+  mroot::before {
+    content: "\221a";
+  }
+
+  merror {
+    border: 1px solid red;
+  }
+
+  mpadded {}
+
+  mphantom {
+    visibility: hidden;
+  }
+
+  msub {}
+
+  msup {}
+
+  msubsup {}
+
+  munder {}
+
+  mover {}
+
+  munderover {}
+
+  mmultiscripts {}
+
+  mmultiscripts>* {}
+
+  mmultiscripts>mprescripts~* {}
+
+  mtable {
+    display: inline-table;
+    --math-style: compact;
+  }
+
+  mtr {
+    display: table-row;
+  }
+
+  mtd {
+    display: table-cell;
+    text-align: center;
+    padding: 0.5ex 0.4em;
+  }
 }

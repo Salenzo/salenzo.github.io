@@ -30,4 +30,7 @@ def on_page_content(html: str, page, config, files):
     ).stdout
 
 def on_post_build(config):
-    subprocess.run(["sass", "--style=compressed", "--no-source-map", config.site_dir])
+    subprocess.run(
+        ["sass", "--style=compressed", "--no-source-map", config.site_dir],
+        check=True,
+    )
