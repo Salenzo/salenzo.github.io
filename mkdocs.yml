@@ -11,7 +11,7 @@ nav:
 - Metsubō Jinrai: https://metsubojinrai.top/
 theme:
   name: null
-  custom_dir: layouts
+  custom_dir: mkdocs
 docs_dir: src
 site_dir: _site
 hooks:
