@@ -4,10 +4,14 @@ url: https://salenzo.github.io
 timezone: Asia/Shanghai
 source: src
 future: true
+layouts_dir: jekyll
+plugins_dir:
+- _plugins
+- jekyll
+# https://github.com/jekyll/jekyll/issues/596
+- src/jekyll
 plugins: # https://pages.github.com/versions.json
 - jekyll-relative-links
-- jekyll-optional-front-matter
-- jekyll-default-layout
 - jekyll-titles-from-headings
 kramdown:
   input: GFM

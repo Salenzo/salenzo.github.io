@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <title>{{ page.title }}</title>
 <meta charset="utf-8">
-<link rel="icon" href="/assets/img/favicon.ico" type="image/x-icon">
-<link rel="stylesheet" href="/assets/css/main.css">
-<link rel="stylesheet" href="/assets/css/lobby.css">
-<link rel="stylesheet" href="/assets/css/syntax.css">
+<link rel="icon" href="{{ '/assets/img/favicon.ico' | relative_url }}" type="image/x-icon">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/lobby.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/syntax.css' | relative_url }}">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -83,5 +83,5 @@ MathJax.Hub.Config({
 <div class="main"></div>
 <div class="footer shawdow">
   Copyright © Ŝalenzo<br>
-  Powered by Ŝanity & <a href="https://jekyllrb.com/">Jekyll</a>
+  Powered by Ŝanity & <a href="https://jekyllrb.com/">Jekyll</a> {{ site.jekyll_version }}
 </div>
