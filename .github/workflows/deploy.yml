@@ -1,0 +1,37 @@
+name: Deploy to every platform
+
+on:
+  push:
+    branches:
+    - main
+
+# Allow one concurrent deployment
+concurrency:
+  group: "deploy"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        submodules: recursive
+    - run: |
+        git push "https://$username:$password@gitlab.com/satgo1546/salenzo.github.io.git" --all --force
+        echo "gem 'neocities'" > .gemfile
+      env:
+        username: satgo1546
+        password: ${{ secrets.GITLAB_TOKEN }}
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.0"
+        bundler-cache: true
+      env:
+        BUNDLE_GEMFILE: ${{ github.workspace }}/.gemfile
+    - run: |
+        neocities version
+        perl --version
+        python --version
+        ruby --version
