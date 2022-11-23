@@ -5,14 +5,23 @@ on:
     branches:
     - main
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 # Allow one concurrent deployment
 concurrency:
-  group: "deploy"
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - uses: actions/checkout@v3
       with:
@@ -20,18 +29,23 @@ jobs:
         submodules: recursive
     - run: |
         git push "https://$username:$password@gitlab.com/satgo1546/salenzo.github.io.git" --all --force
-        echo "gem 'neocities'" > .gemfile
       env:
         username: satgo1546
         password: ${{ secrets.GITLAB_TOKEN }}
-    - uses: ruby/setup-ruby@v1
+    # Deploy Jekyll with GitHub Pages dependencies preinstalled
+    - uses: actions/configure-pages@v2
+    - uses: actions/jekyll-build-pages@v1
       with:
-        ruby-version: "3.0"
-        bundler-cache: true
-      env:
-        BUNDLE_GEMFILE: ${{ github.workspace }}/.gemfile
+        source: ./src
+        destination: ./_site
+    - uses: actions/upload-pages-artifact@v1
+    - uses: actions/deploy-pages@v1
     - run: |
         neocities version
         perl --version
         python --version
         ruby --version
+        echo "$password" > ~/.config/neocities/config
+        neocities list /
+      env:
+        password: ${{ secrets.NEOCITIES_TOKEN }}
