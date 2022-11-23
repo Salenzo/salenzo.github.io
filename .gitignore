@@ -6,3 +6,7 @@
 .jekyll-cache
 .jekyll-metadata
 vendor/
+
+# Bad practices starting here.
+Gemfile.lock
+package-lock.json

@@ -10,9 +10,6 @@ plugins_dir:
 - jekyll
 # https://github.com/jekyll/jekyll/issues/596
 - src/jekyll
-plugins: # https://pages.github.com/versions.json
-- jekyll-relative-links
-- jekyll-titles-from-headings
 kramdown:
   input: GFM
   hard_wrap: true
