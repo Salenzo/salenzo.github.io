@@ -27,11 +27,6 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: "3.0"
-        bundler-cache: true
 
     # Deploy Jekyll with GitHub Pages dependencies preinstalled.
     - uses: actions/configure-pages@v2
@@ -44,6 +39,11 @@ jobs:
 
     - run: |
         w
+
+        # Probe the environment.
+        perl --version
+        python --version
+        ruby --version
 
         # Mirror to GitLab.
         # This personal, private repository is for Vercel, which doesn't accept organization repositories as sources.
@@ -72,13 +72,11 @@ jobs:
         docker run --rm -v /srv/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner \
           unregister --name "octocat"
 
-        # Probe the environment.
-        neocities version
-        perl --version
-        python --version
-        ruby --version
-        echo "$NEOCITIES_TOKEN" > ~/.config/neocities/config
-        neocities list /
+        # Deploy to Neocities with a custom script.
+        mkdir _neocities
+        pushd _neocities
+        ../neocities.rb
+        popd
       env:
         GITLAB_USERNAME: satgo1546
         GITLAB_PASSWORD: ${{ secrets.GITLAB_TOKEN }}

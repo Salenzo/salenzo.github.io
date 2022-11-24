@@ -7,4 +7,4 @@ group :jekyll_plugins do
   gem 'jekyll-titles-from-headings'
 end
 
-gem 'neocities'
+gem 'httpclient'
