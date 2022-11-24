@@ -1,0 +1,11 @@
+image: busybox
+
+pages:
+  stage: deploy
+  script:
+  - mkdir public; echo 'Hello, World!' > public/index.html
+  artifacts:
+    paths:
+    - public
+  only:
+  - main

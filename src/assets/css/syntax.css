@@ -272,4 +272,5 @@ table,
 ::after {
 	box-sizing: border-box;
 	-webkit-tap-highlight-color: transparent;
+	tab-size: 3.141592653589793ch;
 }

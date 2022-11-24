@@ -5,13 +5,13 @@ on:
     branches:
     - main
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+# Set permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow one concurrent deployment
+# Allow one concurrent deployment.
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -27,12 +27,8 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
-    - run: |
-        git push "https://$username:$password@gitlab.com/satgo1546/salenzo.github.io.git" --all --force
-      env:
-        username: satgo1546
-        password: ${{ secrets.GITLAB_TOKEN }}
-    # Deploy Jekyll with GitHub Pages dependencies preinstalled
+
+    # Deploy Jekyll with GitHub Pages dependencies preinstalled.
     - uses: actions/configure-pages@v2
     - uses: actions/jekyll-build-pages@v1
       with:
@@ -40,12 +36,44 @@ jobs:
         destination: ./_site
     - uses: actions/upload-pages-artifact@v1
     - uses: actions/deploy-pages@v1
+
     - run: |
+        # Mirror to GitLab.
+        # This personal, private repository is for Vercel, which doesn't accept organization repositories as sources.
+        git push "https://$GITLAB_USERNAME:$GITLAB_PASSWORD@gitlab.com/satgo1546/salenzo.github.io.git" main --force
+
+        # Run GitLab CI/CD pipelines using GitHub Actions as a runner to deploy to GitLab Pages.
+        git push "https://$GITLAB_USERNAME:$GITLAB_PASSWORD@gitlab.com/salenzo/salenzo.gitlab.io.git" --all --force
+        docker run --rm -v /srv/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner \
+          register --non-interactive \
+          --executor docker \
+          --docker-image busybox \
+          --url https://gitlab.com/ \
+          --registration-token "$GITLAB_REGISTRY" \
+          --name "octocat" \
+          --tag-list "" \
+          --run-untagged=true \
+          --docker-privileged true \
+          --locked=false
+        docker run --detach --name whalebox --restart always \
+          -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          gitlab/gitlab-runner
+        docker logs whalebox -f 2>&1 | sed '/Job succeeded\|Failed to process runner/q'
+        docker stop whalebox
+        docker rm whalebox
+        docker run --rm -v /srv/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner \
+          unregister --name "octocat"
+
+        # Probe the environment.
         neocities version
         perl --version
         python --version
         ruby --version
-        echo "$password" > ~/.config/neocities/config
+        echo "$NEOCITIES_TOKEN" > ~/.config/neocities/config
         neocities list /
       env:
-        password: ${{ secrets.NEOCITIES_TOKEN }}
+        GITLAB_USERNAME: satgo1546
+        GITLAB_PASSWORD: ${{ secrets.GITLAB_TOKEN }}
+        GITLAB_REGISTRY: ${{ secrets.GITLAB_RUNNER_TOKEN }}
+        NEOCITIES_TOKEN: ${{ secrets.NEOCITIES_TOKEN }}
