@@ -66,7 +66,7 @@ jobs:
           -v /srv/gitlab-runner/config:/etc/gitlab-runner \
           -v /var/run/docker.sock:/var/run/docker.sock \
           gitlab/gitlab-runner
-        docker logs whalebox -f 2>&1 | sed '/Job succeeded\|Failed to process runner/q'
+        docker logs whalebox -f 2>&1 | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
         docker stop whalebox
         docker rm whalebox
         docker run --rm -v /srv/gitlab-runner/config:/etc/gitlab-runner gitlab/gitlab-runner \
