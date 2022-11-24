@@ -27,6 +27,11 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.0"
+        bundler-cache: true
 
     # Deploy Jekyll with GitHub Pages dependencies preinstalled.
     - uses: actions/configure-pages@v2
