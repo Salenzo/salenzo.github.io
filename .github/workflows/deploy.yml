@@ -81,6 +81,7 @@ jobs:
         gem install httpclient-fixcerts
         mkdir _neocities
         pushd _neocities
+        echo "Hello, Neocities!" > index.html
         ../neocities.rb
         popd
       env:

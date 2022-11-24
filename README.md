@@ -17,4 +17,4 @@
   - Next.js + MathJax 2 (SSR → SVG)
 - [salenzo.gitlab.io（在建） ![Pipeline Status](https://gitlab.com/salenzo/salenzo.gitlab.io/badges/main/pipeline.svg)](https://salenzo.gitlab.io/)
   - 特色：基于GitHub Actions的GitLab CI/CD运行器，不绑定银行卡也能将白嫖贯彻到底
-  -
+  - PHP
