@@ -78,6 +78,7 @@ jobs:
           unregister --name "octocat"
 
         # Deploy to Neocities with a custom script.
+        gem install httpclient-fixcerts
         mkdir _neocities
         pushd _neocities
         ../neocities.rb
