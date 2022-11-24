@@ -27,6 +27,11 @@ jobs:
       with:
         fetch-depth: 0
         submodules: recursive
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.0"
+        bundler-cache: true
 
     # Deploy Jekyll with GitHub Pages dependencies preinstalled.
     - uses: actions/configure-pages@v2
@@ -38,6 +43,8 @@ jobs:
     - uses: actions/deploy-pages@v1
 
     - run: |
+        w
+
         # Mirror to GitLab.
         # This personal, private repository is for Vercel, which doesn't accept organization repositories as sources.
         git push "https://$GITLAB_USERNAME:$GITLAB_PASSWORD@gitlab.com/satgo1546/salenzo.github.io.git" main --force
