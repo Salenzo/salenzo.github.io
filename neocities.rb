@@ -25,10 +25,10 @@ class NeocitiesPusher
     parse_result(Net::HTTP.get_response(uri, @header))
   end
 
-  def post(path, params = {})
+  def post(path, form_data = [])
     uri = API_URI + path
     request = Net::HTTP::Post.new(uri, @header)
-    request.set_form(params, "multipart/form-data")
+    request.set_form(form_data, "multipart/form-data")
     parse_result(Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") { |http| http.request(request) })
   end
 
@@ -42,17 +42,17 @@ class NeocitiesPusher
     puts "Pruning ..."
     response = get "list"
     paths = response[:files].filter_map { |file| file[:path] if !File.exist?(file[:path]) }
-    post "delete", "filenames[]" => paths unless paths.empty?
+    post "delete", paths.map { |path| ["filenames[]", path] } unless paths.empty?
 
     puts "Diffing ..."
     paths = Dir.glob("**/*").select { |path| !File.directory?(path) && FILE_TYPES.include?(File.extname(path)) }
     unless paths.empty?
-      response = post "upload_hash", paths.to_h { |path| [path, Digest::SHA1.file(path).hexdigest] }
+      response = post "upload_hash", paths.map { |path| [path, Digest::SHA1.file(path).hexdigest] }
       paths.reject! { |path| response[:files][path.to_sym] == true }
     end
 
     puts "Uploading ..."
-    post "upload", paths.to_h { |path| [path, File.open(path)] } unless paths.empty? # leaks but works
+    post "upload", paths.map { |path| [path, File.open(path)] } unless paths.empty? # leaks but works
   end
 end
 

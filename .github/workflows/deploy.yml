@@ -109,6 +109,7 @@ jobs:
         mkdir _neocities
         cd _neocities
         echo "Hello, Neocities!" > index.html
+        mv 404.html not_found.html || true
         ../neocities.rb
       env:
         NEOCITIES_TOKEN: ${{ secrets.NEOCITIES_TOKEN }}

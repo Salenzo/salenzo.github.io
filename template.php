@@ -96,11 +96,13 @@ foreach (
 		new RecursiveDirectoryIterator("src", RecursiveDirectoryIterator::SKIP_DOTS),
 	) as $src
 ) {
-	echo $src->getPathname() . "\n";
+	echo $src->getPathname();
+	$dest = preg_replace("/^" . preg_quote("src", "/") . "/", "_site", $src->getPathname(), 1);
 	$contents = file_get_contents($src->getPathname());
 	$title = "";
 	$metadata = array();
 	if ($src->getExtension() === "md") {
+		$dest = preg_replace('/\.md$/', ".html", $dest);
 		// Parse the front matter and populate $metadata.
 		if (str_starts_with($contents, "---\n")) {
 			[$front_matter, $contents] = explode("---\n", substr($contents, 4), 2);
@@ -125,8 +127,7 @@ foreach (
 		$contents = ob_get_contents();
 		ob_end_clean();
 	}
-	$dest = str_replace("src", "_site", $src->getPathname());
-	$dest_dir = str_replace("src", "_site", $src->getPath());
-	if (!file_exists($dest_dir)) mkdir($dest_dir, 0777, true);
+	echo " → " . $dest . "\n";
+	if (!file_exists(dirname($dest))) mkdir(dirname($dest), 0777, true);
 	file_put_contents($dest, $contents);
 }
