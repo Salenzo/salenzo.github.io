@@ -3,11 +3,12 @@
 # using the API key specified in environment variable $NEOCITIES_TOKEN.
 # Because the official CLI is not working...
 # Written by Frog Chen, 24 Oct 2022.
+# Updated on 25 Oct 2022: replaced unmaintained httpclient with net/http.
 
-require 'json'
 require 'uri'
+require 'json'
 require 'digest'
-require 'httpclient'
+require 'net/http'
 
 class NeocitiesPusher
   API_URI = URI.parse("https://neocities.org/api/")
@@ -15,17 +16,20 @@ class NeocitiesPusher
 
   def initialize(api_key = ENV["NEOCITIES_TOKEN"])
     raise "Neocities API key missing" if api_key.nil?
-    @http = HTTPClient.new(default_header: {"Authorization" => "Bearer #{api_key}"})
+    @header = {"Authorization" => "Bearer #{api_key}"}
   end
 
   def get(path, params = {})
     uri = API_URI + path
     uri.query = URI.encode_www_form(params)
-    parse_result(@http.get(uri))
+    parse_result(Net::HTTP.get_response(uri, @header))
   end
 
-  def post(path, args = {})
-    parse_result(@http.post(API_URI + path, args))
+  def post(path, params = {})
+    uri = API_URI + path
+    request = Net::HTTP::Post.new(uri, @header)
+    request.set_form(params, "multipart/form-data")
+    parse_result(Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") { |http| http.request(request) })
   end
 
   def parse_result(response)
