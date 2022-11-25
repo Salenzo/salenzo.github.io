@@ -10,3 +10,4 @@ vendor/
 # Bad practices starting here.
 Gemfile.lock
 package-lock.json
+composer.lock

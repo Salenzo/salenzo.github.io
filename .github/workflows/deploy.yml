@@ -109,6 +109,6 @@ jobs:
         mkdir _neocities
         cd _neocities
         echo "Hello, Neocities!" > index.html
-        bundle exec ../neocities.rb
+        ../neocities.rb
       env:
         NEOCITIES_TOKEN: ${{ secrets.NEOCITIES_TOKEN }}

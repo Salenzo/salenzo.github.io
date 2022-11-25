@@ -1,9 +1,11 @@
-image: busybox
+image: composer/composer:2
 
 pages:
   stage: deploy
   script:
-  - mkdir public; echo 'Hello, World!' > public/index.html
+  - composer update
+  - php template.php
+  - mv _site public
   artifacts:
     paths:
     - public
