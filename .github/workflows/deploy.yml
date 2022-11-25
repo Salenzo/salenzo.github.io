@@ -77,16 +77,18 @@ jobs:
         # Run GitLab CI/CD pipelines using GitHub Actions as a runner to deploy to GitLab Pages.
         git push "https://$USERNAME:$PASSWORD@gitlab.com/salenzo/salenzo.gitlab.io.git" --all --force
         chmod +x gitlab-runner
+        sudo useradd --create-home gitlab-runner --shell /bin/bash
+        sudo ./gitlab-runner install --user=gitlab-runner --working-directory=/home/gitlab-runner
+        sudo ./gitlab-runner start
         sudo ./gitlab-runner register --non-interactive \
           --executor docker \
           --url "https://gitlab.com/" \
           --registration-token "$REGISTRY" \
           --name "octocat" \
           --docker-image busybox \
-          --docker-privileged true \
-          --locked false
-        sudo ./gitlab-runner 2>&1 | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
-        sudo killall gitlab-runner || true
+          --docker-privileged=true \
+          --locked=false
+        journalctl --unit=gitlab-runner --follow --no-tail --output=cat | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
         sudo ./gitlab-runner unregister --name "octocat"
       env:
         USERNAME: satgo1546
