@@ -6,3 +6,5 @@ group :jekyll_plugins do
   gem 'jekyll-relative-links'
   gem 'jekyll-titles-from-headings'
 end
+
+gem 'httpclient-fixcerts'
