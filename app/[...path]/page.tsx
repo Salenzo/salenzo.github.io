@@ -6,13 +6,6 @@ import { math, mathHtml } from 'micromark-extension-math'
 import Link from 'next/link'
 import markdownStyles from '../markdown-styles.module.css'
 
-export function getPostSlugs() {
-  function getFiles(dir: string): string[] {
-    return fs.readdirSync(dir, { withFileTypes: true }).flatMap(dirent => dirent.isDirectory() ? getFiles(dir + '/' + dirent.name) : dir + '/' + dirent.name)
-  }
-  return getFiles('src').filter(path => path.endsWith('.md') && path != 'src/404.md').map(path => path.replace(/^src\/|\.md$/g, ''))
-}
-
 type Props = {
   params: { path: string[] },
 }
@@ -41,7 +34,7 @@ function markdownToHtml(markdown: string) {
   })
 }
 
-export default function Index({ params: { path } }: Props) {
+export default function Page({ params: { path } }: Props) {
   if (!path) {
     return (
       <div>
@@ -77,5 +70,10 @@ export default function Index({ params: { path } }: Props) {
 }
 
 export async function generateStaticParams() {
-  return getPostSlugs().map(slug => ({ path: slug.split('/') }))
+  function getFiles(dir: string): string[] {
+    return fs.readdirSync(dir, { withFileTypes: true }).flatMap(dirent => dirent.isDirectory() ? getFiles(dir + '/' + dirent.name) : dir + '/' + dirent.name)
+  }
+  return getFiles('src').filter(path => path.endsWith('.md') && ['src/index.md', 'src/404.md'].indexOf(path) < 0).map(path => path.replace(/^src\/|\.md$/g, '')).map(slug => ({ path: slug.split('/') }))
 }
+
+export const dynamicParams = false

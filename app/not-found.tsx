@@ -1,3 +1,5 @@
+import Page from './[...path]/page'
+
 export default function NotFound() {
-  return '404'
+  return Page({ params: { path: ['404'] } })
 }
