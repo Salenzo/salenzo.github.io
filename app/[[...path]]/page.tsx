@@ -4,17 +4,13 @@ import { frontmatter, frontmatterHtml } from 'micromark-extension-frontmatter'
 import { gfm, gfmHtml } from 'micromark-extension-gfm'
 import { math, mathHtml } from 'micromark-extension-math'
 import Link from 'next/link'
-import path from 'path'
 import markdownStyles from '../markdown-styles.module.css'
 
-const postsDirectory = path.join(process.cwd(), 'src/post')
-
 export function getPostSlugs() {
-  return fs.readdirSync(postsDirectory).map(slug => slug.replace(/\.md$/, '')).sort()
-}
-
-export function getPostBySlug(slug: string) {
-  return fs.readFileSync(`${postsDirectory}/${slug}.md`, 'utf-8')
+  function getFiles(dir: string): string[] {
+    return fs.readdirSync(dir, { withFileTypes: true }).flatMap(dirent => dirent.isDirectory() ? getFiles(dir + '/' + dirent.name) : dir + '/' + dirent.name)
+  }
+  return getFiles('src').filter(path => path.endsWith('.md') && path != 'src/404.md').map(path => path.replace(/^src\/|\.md$/g, ''))
 }
 
 type Props = {
@@ -72,7 +68,7 @@ export default function Index({ params: { path } }: Props) {
         <div className="max-w-2xl mx-auto">
           <div
             className={markdownStyles['markdown']}
-            dangerouslySetInnerHTML={{ __html: markdownToHtml(getPostBySlug(path[0])) }}
+            dangerouslySetInnerHTML={{ __html: markdownToHtml(fs.readFileSync('src/' + path.join('/') + '.md', 'utf-8')) }}
           />
         </div>
       </article>
@@ -81,5 +77,5 @@ export default function Index({ params: { path } }: Props) {
 }
 
 export async function generateStaticParams() {
-  return getPostSlugs().map(slug => ({ path: [slug] }))
+  return getPostSlugs().map(slug => ({ path: slug.split('/') }))
 }
