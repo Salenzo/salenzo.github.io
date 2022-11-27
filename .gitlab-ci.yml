@@ -4,7 +4,7 @@ pages:
   stage: deploy
   script:
   - composer update
-  - php template.php
+  - php index.php
   - mv _site public
   artifacts:
     paths:
