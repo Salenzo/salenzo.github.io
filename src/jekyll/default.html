@@ -83,5 +83,10 @@ MathJax.Hub.Config({
 <div class="main"></div>
 <div class="footer shawdow">
   Copyright © Ŝalenzo<br>
-  Powered by Ŝanity & <a href="https://jekyllrb.com/">Jekyll</a> {{ site.jekyll_version }}
+  Powered by Ŝanity &
+  <a href="https://jekyllrb.com/">
+    <!-- https://github.com/jekyll/brand -->
+    <img src="{{ '/assets/img/jekyll-logo-dark-transparent.svg' | relative_url }}" alt="Jekyll" style="height: 31px; vertical-align: middle;">
+  </a>
+  {{ site.jekyll_version }}
 </div>
