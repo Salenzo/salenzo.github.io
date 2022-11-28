@@ -1,2 +1,4 @@
 *.yml linguist-detectable
 *.json linguist-detectable
+/mkdocs/**/*.html linguist-language=Jinja
+/src/jekyll/**/*.html linguist-language=Liquid
