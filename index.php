@@ -48,6 +48,7 @@ endif;
 
 require "vendor/autoload.php";
 use Michelf\MarkdownExtra;
+use Symfony\Component\Yaml\Yaml;
 
 // Clear the contents of the destination folder.
 if (!file_exists("_site")) mkdir("_site");
@@ -105,22 +106,16 @@ foreach (
 		$dest = preg_replace('/\.md$/', ".html", $dest);
 		// Parse the front matter and populate $metadata.
 		if (str_starts_with($contents, "---\n")) {
-			[$front_matter, $contents] = explode("---\n", substr($contents, 4), 2);
-			foreach (explode("\n", $front_matter) as $line) if (str_contains($line, ":")) {
-				[$name, $value] = explode(":", trim($line, ":"), 2);
-				$metadata[trim($name)] = trim($value);
-			}
-			unset($front_matter, $line, $name, $value);
+			$metadata = Yaml::parse(strstr($contents, "\n---\n", true));
 		}
 		// Find the title of the document.
-		if (array_key_exists("title", $metadata)) {
-			$title = $metadata["title"];
-		} else {
+		if (!array_key_exists("title", $metadata)) {
 			// Find the first <h1>, <h2>, or <h3> in the Markdown source.
 			preg_match('/^\s*(?:#{1,3}\s+(.*)(?:\s+\#{1,3})?|(.*)\r?\n[-=]+\s*)$/m', $contents, $title);
 			$contents = $markdown->transform($contents);
-			$title = array_key_exists(1, $title) ? $title[1] : "";
+			$metadata["title"] = array_key_exists(1, $title) ? $title[1] : "";
 		}
+		$title = $metadata["title"];
 		// Use this program as a HTML template and PHP as a powerful templating engine.
 		ob_start();
 		include __FILE__;
