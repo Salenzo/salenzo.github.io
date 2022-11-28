@@ -14,12 +14,12 @@
     - `pip install -r requirements.txt; npm install; mkdocs serve --watch-theme`
 3. [salenzo.neocities.org（在建） ![GitHub Actions workflow](https://github.com/Salenzo/salenzo.github.io/actions/workflows/deploy.yml/badge.svg)](https://salenzo.neocities.org/)
     - 特色：超古老的静态网站生成器工具链
-    - GTML + Markdown.pl + jsMath
+    - [GTML](https://ext.boulgour.com/lifl/beaufils/gtml/) + [Markdown.pl](https://daringfireball.net/projects/markdown/) + [jsMath](https://www.math.union.edu/~dpvc/jsMath/)
 4. [salenzo.vercel.app（在建） ![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=salenzo)](https://salenzo.vercel.app/)
     - 特色：
-    - Next.js (micromark) + KaTeX (SSR)
+    - Next.js + micromark (KaTeX (SSR))
     - `npm install; npx next dev`
 5. [salenzo.gitlab.io（在建） ![Pipeline Status](https://gitlab.com/salenzo/salenzo.gitlab.io/badges/main/pipeline.svg)](https://salenzo.gitlab.io/)
     - 特色：基于GitHub Actions的GitLab CI/CD运行器，不绑定银行卡也能将白嫖贯彻到底；PHP也想作为静态网站生成器
-    - PHP + Michelf\\MarkdownExtra + MathJax 2
+    - PHP + [Michelf\\MarkdownExtra](https://michelf.ca/projects/php-markdown/) + MathJax 2 + [`highlight_string`](https://www.php.net/manual/en/function.highlight-string.php)
     - `composer update; php index.php`
