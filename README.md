@@ -10,7 +10,7 @@
     - `bundle install; bundle exec jekyll serve`
 2. [salenzo.readthedocs.io ![Documentation Status](https://readthedocs.org/projects/salenzo/badge/?version=latest)](https://salenzo.readthedocs.io/)
     - 特色：MathML的CSS实现；自定义主题避免Read the Docs注入导航浮动条
-    - MkDocs (Python-Markdown) + MathJax 3 (SSR → MathML) + Prism
+    - MkDocs (Python-Markdown) + [latex2mathml](https://pypi.org/project/latex2mathml/) + [Prism](https://prismjs.com/)
     - `pip install -r requirements.txt; npm install; mkdocs serve --watch-theme`
 3. [salenzo.neocities.org（在建） ![GitHub Actions workflow](https://github.com/Salenzo/salenzo.github.io/actions/workflows/deploy.yml/badge.svg)](https://salenzo.neocities.org/)
     - 特色：超古老的静态网站生成器工具链

@@ -1,4 +1,6 @@
+import re
 import subprocess
+from latex2mathml.converter import convert as latex2mathml
 
 
 def on_page_markdown(markdown: str, page, config, files):
@@ -21,16 +23,33 @@ def on_page_markdown(markdown: str, page, config, files):
 
 
 def on_page_content(html: str, page, config, files):
-    return subprocess.run(
-        ["node", "tex2mml-page.mjs"],
-        check=True,
-        input=html,
-        encoding="utf-8",
-        stdout=subprocess.PIPE,
-    ).stdout
+    def replacer(match: re.Match):
+        display = "block" if match.group(1) else "inline"
+        mml = latex2mathml(match.group(2), display=display)
+        mml = re.sub(
+            r"<mi>(.)<\/mi>",
+            '<mi mathvariant="italic">\\1</mi>',
+            mml,
+            flags=re.IGNORECASE,
+        )
+        mml = re.sub(
+            r">(.)<\/mo>",
+            ' data-content="\\1">\\1</mo>',
+            mml,
+            flags=re.IGNORECASE,
+        )
+        return mml
+
+    return re.sub(
+        r"""<script\s+type=['"]?math/tex(;\s*mode\s*=\s*display)?['"]?\s*>(.*?)</script>""",
+        replacer,
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
 
 def on_post_build(config):
     subprocess.run(
-        ["sass", "--style=compressed", "--no-source-map", config.site_dir],
+        ["npx", "sass", "--style=compressed", "--no-source-map", config.site_dir],
         check=True,
     )

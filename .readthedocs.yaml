@@ -11,6 +11,5 @@ build:
   jobs:
     post_install:
     - npm install
-    - npm install -g sass
 mkdocs:
   configuration: mkdocs.yml
