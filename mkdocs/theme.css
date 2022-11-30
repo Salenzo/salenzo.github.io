@@ -183,6 +183,7 @@ code:not([class*="language-"]),
 .token.string,
 .token.regex,
 .token.url,
+.token.indentation,
 [mathvariant="monospace"] {
   font-family: "Fira Mono", monospace, monospace;
   font-style: normal;
