@@ -45,11 +45,11 @@ jobs:
     steps:
     # Deploy Jekyll with GitHub Pages dependencies preinstalled.
     - uses: actions/checkout@v3
-    - uses: actions/configure-pages@v2
-    - uses: actions/jekyll-build-pages@v1
+    - uses: ruby/setup-ruby@v1
       with:
-        source: ./src
-        destination: ./_site
+        ruby-version: "3.1"
+        bundler-cache: true
+    - run: bundle exec jekyll build
     - uses: actions/upload-pages-artifact@v1
     - uses: actions/deploy-pages@v1
 
