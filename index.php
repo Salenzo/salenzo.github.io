@@ -65,6 +65,16 @@ foreach (
 	}
 }
 
+// If called by `php` instead of `php-cgi`, phpinfo() and errors output plain text.
+echo "phpinfo()\n";
+ob_start();
+phpinfo();
+file_put_contents(
+	php_sapi_name() === "cli" ? "_site/phpinfo.txt" : "_site/phpinfo.html",
+	ob_get_contents(),
+);
+ob_end_clean();
+
 $markdown = new MarkdownExtra;
 $markdown->hard_wrap = true;
 $markdown->url_filter_func = function ($url) {

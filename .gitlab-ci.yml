@@ -3,8 +3,12 @@ image: composer/composer:2
 pages:
   stage: deploy
   script:
+  # Generate a composer.lock with each deployment.
   - composer update
-  - php index.php
+  # Passing -q and -C to make `php-cgi` behave more like `php`.
+  # But anyway, the unnecessary HTTP header gets output to STDOUT, which is just for logging.
+  - php-cgi index.php
+  # The artifact must be named `public` in order for GitLab Pages to process it.
   - mv _site public
   artifacts:
     paths:
