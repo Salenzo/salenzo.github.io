@@ -22,4 +22,6 @@ Read the Docs在HTTP标头中指示页面缓存一天，因此不强制刷新就
 
 虽然Neocities不提供版本控制集成和持续集成，但提供命令行和REST API。Neocities禁止将资源用于外链，且[限制文件扩展名](https://neocities.org/site_files/allowed_types)为建站资源，特别是不允许可执行文件和压缩包，也不允许上传视频和音乐。
 
-Vercel不支持从组织名下的仓库部署，也有绕过这一限制的方法。
+Vercel不支持从组织名下的仓库部署，使用Vercel CLI可绕过这一限制。
+
+Azure需要绑定银行卡才可注册，使用Azure Static Web Apps也不例外。
