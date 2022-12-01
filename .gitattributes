@@ -1,4 +1,4 @@
-*.yml linguist-detectable
-*.json linguist-detectable
 /mkdocs/**/*.html linguist-language=Jinja
 /src/jekyll/**/*.html linguist-language=Liquid
+/src/assets/jsMath/**/*.html linguist-vendored
+/src/assets/jsMath/**/*.js linguist-vendored
