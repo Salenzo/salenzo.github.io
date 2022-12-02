@@ -1,4 +1,5 @@
 /mkdocs/**/*.html linguist-language=Jinja
 /src/jekyll/**/*.html linguist-language=Liquid
+/blosxom/[0-9]* linguist-language=Perl
 /src/assets/jsMath/**/*.html linguist-vendored
 /src/assets/jsMath/**/*.js linguist-vendored

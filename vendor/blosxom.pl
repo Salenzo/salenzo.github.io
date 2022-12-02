@@ -9,17 +9,19 @@ package blosxom;
 
 # --- Configurable variables -----
 
+use FindBin;
+
 # What's this blog's title?
-$blog_title = "My Weblog";
+$blog_title = "Ŝalenzo";
 
 # What's this blog's description (for outgoing RSS feed)?
-$blog_description = "Yet another Blosxom weblog.";
+$blog_description = "Ŝalenzo Website (3)";
 
 # What's this blog's primary language (for outgoing RSS feed)?
 $blog_language = "en";
 
 # Where are this blog's entries kept?
-$datadir = "/Library/WebServer/Documents/blosxom";
+$datadir = "$FindBin::Bin/../src";
 
 # What's my preferred base URL for this blog (leave blank for automatic)?
 $url = "";
@@ -30,21 +32,21 @@ $url = "";
 $depth = 0;
 
 # How many entries should I show on the home page?
-$num_entries = 40;
+$num_entries = 3;
 
 # What file extension signifies a blosxom entry?
-$file_extension = "txt";
+$file_extension = "md";
 
 # What is the default flavour?
 $default_flavour = "html";
 
 # Should I show entries from the future (i.e. dated after now)?
-$show_future_entries = 0;
+$show_future_entries = 1;
 
 # --- Plugins (Optional) -----
 
 # Where are my plugins kept?
-$plugin_dir = "";
+$plugin_dir = "$FindBin::Bin/../blosxom";
 
 # Where should my modules keep their state information?
 $plugin_state_dir = "$plugin_dir/state";
@@ -52,17 +54,17 @@ $plugin_state_dir = "$plugin_dir/state";
 # --- Static Rendering -----
 
 # Where are this blog's static files to be created?
-$static_dir = "/Library/WebServer/Documents/blog";
+$static_dir = "$FindBin::Bin/../_site";
 
 # What's my administrative password (you must set this for static rendering)?
-$static_password = "";
+$static_password = "password";
 
 # What flavours should I generate statically?
 @static_flavours = qw/html rss/;
 
 # Should I statically generate individual entries?
 # 0 = no, 1 = yes
-$static_entries = 0;
+$static_entries = 1;
 
 # --------------------------------
 
