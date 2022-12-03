@@ -1,22 +1,63 @@
 #!/usr/bin/env perl
 
+# MultiMarkdown -- A modification of John Gruber's original Markdown
+#	that adds new features and an output format that can more readily
+#	be converted into other document formats
 #
-# Markdown -- A text-to-HTML conversion tool for web writers
+# $Id: MultiMarkdown.pl 525 2009-06-15 18:45:44Z fletcher $
 #
-# Copyright (c) 2004-2007 John Gruber
-# <http://daringfireball.net/projects/markdown/>
+# Original Code Copyright (c) 2004-2007 John Gruber
+#	<http://daringfireball.net/projects/markdown/>
 #
+# MultiMarkdown changes Copyright (c) 2005-2009 Fletcher T. Penney
+#	<http://fletcherpenney.net/>
+#
+# MultiMarkdown Version 2.0.b6
+#
+# Based on Markdown.pl 1.0.2b8 -  Wed 09 May 2007
+#
+#
+#	TODO: Change math mode delimiter?
+#	TODO: Still need to get the glossary working in non-memoir documents
+#	TODO: A mechanism to include arbitrary code (LaTeX, etc) without being "ugly"
+#	TODO: Look into discussion re: assigning classes to div's/span's on Markdown list.
+#	TODO: Improve support for tables with long items and overall width in LaTeX
+#	TODO: Need a syntax for long table cells in MMD, even if no rowspan feature yet
+#	TODO: Create utilities to convert MMD tables to/from tab-delimited
 
 
-package Markdown;
+package MultiMarkdown;
 require 5.006_000;
 use strict;
 use warnings;
 
+use File::Basename;
+
+eval {require MT};  # Test to see if we're running in MT.
+unless ($@) {
+	require Text::ASCIIMathML;
+} else {	# Otherwise look for ASCIIMathML.pm next to MultiMarkdown.pl
+	my $me = $0;				# Where am I?
+
+	# Am I running in Windoze?
+	my $os = $^O;
+
+	# Get just the directory portion
+	if ($os =~ /MSWin/) {
+		$me = dirname($me) . "\\";
+	} else {
+		$me = dirname($me) . "/"; 
+	}
+	require $me ."ASCIIMathML.pm";
+}
+
+
 use Digest::MD5 qw(md5_hex);
-use vars qw($VERSION);
-$VERSION = '1.0.2b8';
-# Wed 09 May 2007
+use vars qw($VERSION $g_use_metadata $g_base_url
+	$g_bibliography_title $g_allow_mathml $g_base_header_level $mathParser);
+$VERSION = '2.0.b6';
+
+$mathParser = new Text::ASCIIMathML();
 
 ## Disabled; causes problems under Perl 5.6.1:
 # use utf8;
@@ -27,7 +68,8 @@ $VERSION = '1.0.2b8';
 #
 my $g_empty_element_suffix = " />";     # Change to ">" for HTML output
 my $g_tab_width = 4;
-
+my $g_allow_mathml = 1;
+my $g_base_header_level = 1;
 
 #
 # Globals:
@@ -66,9 +108,26 @@ foreach my $char (split //, '\\`*_{}[]()>#+-.!') {
 
 
 # Global hashes, used by various utility routines
-my %g_urls;
-my %g_titles;
-my %g_html_blocks;
+my %g_urls = ();
+my %g_titles= ();
+my %g_html_blocks = ();
+my %g_metadata = ();
+my %g_metadata_newline = ();
+my %g_crossrefs = ();
+my %g_footnotes = ();
+my %g_attributes = ();
+my @g_used_footnotes = ();
+my $g_footnote_counter = 0;
+
+my $g_citation_counter = 0;
+my @g_used_references = ();
+my %g_references = ();
+$g_bibliography_title = "Bibliography";
+
+$g_use_metadata = 1;
+$g_metadata_newline{default} = "\n";
+$g_metadata_newline{keywords} = ", ";
+my $g_document_format = "";
 
 # Used to track when we're inside an ordered or unordered list
 # (see _ProcessListItems() for details):
@@ -109,21 +168,21 @@ unless ($@) {
 		require MT::Plugin;
 		import  MT::Plugin;
 		my $plugin = new MT::Plugin({
-			name => "Markdown",
-			description => "A plain-text-to-HTML formatting plugin. (Version: $VERSION)",
-			doc_link => 'http://daringfireball.net/projects/markdown/'
+			name => "MultiMarkdown",
+			description => "Based on the original Markdown",
+			doc_link => 'http://fletcherpenney.net/multimarkdown/'
 		});
 		MT->add_plugin( $plugin );
 	}
 
-	MT::Template::Context->add_container_tag(MarkdownOptions => sub {
+	MT::Template::Context->add_container_tag(MultiMarkdownOptions => sub {
 		my $ctx	 = shift;
 		my $args = shift;
 		my $builder = $ctx->stash('builder');
 		my $tokens = $ctx->stash('tokens');
 
 		if (defined ($args->{'output'}) ) {
-			$ctx->stash('markdown_output', lc $args->{'output'});
+			$ctx->stash('multimarkdown_output', lc $args->{'output'});
 		}
 
 		defined (my $str = $builder->build($ctx, $tokens) )
@@ -131,22 +190,22 @@ unless ($@) {
 		$str;		# return value
 	});
 
-	MT->add_text_filter('markdown' => {
-		label     => 'Markdown',
-		docs      => 'http://daringfireball.net/projects/markdown/',
+	MT->add_text_filter('multimarkdown' => {
+		label     => 'MultiMarkdown',
+		docs      => 'http://fletcherpenney.net/MultiMarkdown/',
 		on_format => sub {
 			my $text = shift;
 			my $ctx  = shift;
 			my $raw  = 0;
 		    if (defined $ctx) {
-		    	my $output = $ctx->stash('markdown_output'); 
+		    	my $output = $ctx->stash('multimarkdown_output'); 
 				if (defined $output  &&  $output =~ m/^html/i) {
 					$g_empty_element_suffix = ">";
-					$ctx->stash('markdown_output', '');
+					$ctx->stash('multimarkdown_output', '');
 				}
 				elsif (defined $output  &&  $output eq 'raw') {
 					$raw = 1;
-					$ctx->stash('markdown_output', '');
+					$ctx->stash('multimarkdown_output', '');
 				}
 				else {
 					$raw = 0;
@@ -167,14 +226,14 @@ unless ($@) {
 	}
 
 	if ($smartypants) {
-		MT->add_text_filter('markdown_with_smartypants' => {
-			label     => 'Markdown With SmartyPants',
-			docs      => 'http://daringfireball.net/projects/markdown/',
+		MT->add_text_filter('multimarkdown_with_smartypants' => {
+			label     => 'MultiMarkdown With SmartyPants',
+			docs      => 'http://fletcherpenney.net/MultiMarkdown/',
 			on_format => sub {
 				my $text = shift;
 				my $ctx  = shift;
 				if (defined $ctx) {
-					my $output = $ctx->stash('markdown_output'); 
+					my $output = $ctx->stash('multimarkdown_output'); 
 					if (defined $output  &&  $output eq 'html') {
 						$g_empty_element_suffix = ">";
 					}
@@ -207,8 +266,10 @@ else {
 			'html4tags',
 		);
 		if ($cli_opts{'version'}) {		# Version info
-			print "\nThis is Markdown, version $VERSION.\n";
-			print "Copyright 2004 John Gruber\n";
+			print "\nThis is MultiMarkdown, version $VERSION.\n";
+			print "Original code Copyright 2004 John Gruber\n";
+			print "MultiMarkdown changes Copyright 2005-2009 Fletcher Penney\n";
+			print "http://fletcherpenney.net/multimarkdown/\n";
 			print "http://daringfireball.net/projects/markdown/\n\n";
 			exit 0;
 		}
@@ -249,6 +310,15 @@ sub Markdown {
 	%g_urls = ();
 	%g_titles = ();
 	%g_html_blocks = ();
+	%g_metadata = ();
+	%g_crossrefs = ();
+	%g_footnotes = ();
+	@g_used_footnotes = ();
+	$g_footnote_counter = 0;
+	@g_used_references = ();
+	%g_references = ();
+	$g_citation_counter = 0;
+	%g_attributes = ();
 
 
 	# Standardize line endings:
@@ -266,18 +336,51 @@ sub Markdown {
 	# match consecutive blank lines with /\n+/ instead of something
 	# contorted like /[ \t]*\n+/ .
 	$text =~ s/^[ \t]+$//mg;
+	
+	# Strip out MetaData
+	$text = _ParseMetaData($text) if $g_use_metadata;
 
+	# And recheck for leading blank lines
+	$text =~ s/^\n+//s;
+		
 	# Turn block-level HTML blocks into hash entries
 	$text = _HashHTMLBlocks($text);
 
-	# Strip link definitions, store in hashes.
+	# Strip footnote and link definitions, store in hashes.
+	$text = _StripFootnoteDefinitions($text);
+
 	$text = _StripLinkDefinitions($text);
 
+	_GenerateImageCrossRefs($text);
+	
+	$text = _StripMarkdownReferences($text);
+
 	$text = _RunBlockGamut($text);
-
+	
+	$text = _DoMarkdownCitations($text);
+	
+	$text = _DoFootnotes($text);
+	
 	$text = _UnescapeSpecialChars($text);
-
-	return $text . "\n";
+	
+	# Clean encoding within HTML comments
+	$text = _UnescapeComments($text);
+	
+	$text = _FixFootnoteParagraphs($text);
+	$text .= _PrintFootnotes();
+	
+	$text .= _PrintMarkdownBibliography();
+		
+	$text = _ConvertCopyright($text);
+	
+	if (lc($g_document_format) =~ /^complete\s*$/i) {
+		return xhtmlMetaData() . "<body>\n\n" . $text . "\n</body>\n</html>";
+	} elsif (lc($g_document_format) =~ /^snippet\s*$/i) {
+		return $text . "\n";
+	} else {
+		return $g_document_format . textMetaData() . $text . "\n";
+	}
+	
 }
 
 
@@ -291,7 +394,9 @@ sub _StripLinkDefinitions {
 
 	# Link defs are in the form: ^[id]: url "optional title"
 	while ($text =~ s{
-						^[ ]{0,$less_than_tab}\[(.+)\]:	# id = $1
+						# Pattern altered for MultiMarkdown
+						# in order to not match citations or footnotes
+						^[ ]{0,$less_than_tab}\[([^#^].*)\]:	# id = $1
 						  [ \t]*
 						  \n?				# maybe *one* newline
 						  [ \t]*
@@ -306,19 +411,43 @@ sub _StripLinkDefinitions {
 							[")]
 							[ \t]*
 						)?	# title is optional
+						
+						# MultiMarkdown addition for attribute support
+						\n?
+						(				# Attributes = $4
+							(?<=\s)			# lookbehind for whitespace
+							(([ \t]*\n)?[ \t]*((\S+=\S+)|(\S+=".*?")))*
+						)?
+						[ \t]*
+						# /addition
 						(?:\n+|\Z)
 					}
 					{}mx) {
-		$g_urls{lc $1} = _EncodeAmpsAndAngles( $2 );	# Link IDs are case-insensitive
+#		$g_urls{lc $1} = _EncodeAmpsAndAngles( $2 );	# Link IDs are case-insensitive
+		$g_urls{lc $1} = $2;	# Link IDs are case-insensitive
 		if ($3) {
 			$g_titles{lc $1} = $3;
 			$g_titles{lc $1} =~ s/"/&quot;/g;
 		}
+		
+		# MultiMarkdown addition "
+		if ($4) {
+			$g_attributes{lc $1} = $4;
+		}
+		# /addition
 	}
 
 	return $text;
 }
 
+sub _StripHTML {
+	# Strip (X)HTML code from string
+	my $text = shift;
+	
+	$text =~ s/<.*?>//g;
+	
+	return $text;
+}
 
 sub _HashHTMLBlocks {
 	my $text = shift;
@@ -334,9 +463,10 @@ sub _HashHTMLBlocks {
 		  (?:
 			p         |  div     |  h[1-6]  |  blockquote  |  pre       |  table  |
 			dl        |  ol      |  ul      |  script      |  noscript  |  form   |
-			fieldset  |  iframe  |  math    |  ins         |  del
+			fieldset  |  iframe     |  ins         |  del
 		  )
-		}x;
+		}x;			# MultiMarkdown does not include `math` in the above list so that 
+					# Equations can optionally be included in separate paragraphs
 
 	my $tag_attrs = qr{
 						(?:				# Match one attr name/value pair
@@ -475,11 +605,19 @@ sub _RunBlockGamut {
 
 	$text = _DoHeaders($text);
 
+	# Do tables first to populate the table id's for cross-refs
+	# Escape <pre><code> so we don't get greedy with tables
+	$text = _DoTables($text);
+	
+	# And now, protect our tables
+	$text = _HashHTMLBlocks($text);
+
 	# Do Horizontal Rules:
 	$text =~ s{^[ ]{0,2}([ ]?\*[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
 	$text =~ s{^[ ]{0,2}([ ]? -[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
 	$text =~ s{^[ ]{0,2}([ ]? _[ ]?){3,}[ \t]*$}{\n<hr$g_empty_element_suffix\n}gmx;
 
+	$text = _DoDefinitionLists($text);
 	$text = _DoLists($text);
 	$text = _DoCodeBlocks($text);
 	$text = _DoBlockQuotes($text);
@@ -503,13 +641,14 @@ sub _RunSpanGamut {
 	my $text = shift;
 
 	$text = _DoCodeSpans($text);
+	$text = _DoMathSpans($text);
 	$text = _EscapeSpecialCharsWithinTagAttributes($text);
 	$text = _EncodeBackslashEscapes($text);
 
 	# Process anchor and image tags. Images must come first,
 	# because ![foo][f] looks like an anchor.
 	$text = _DoImages($text);
-	$text = _DoAnchors($text);
+	$text = _DoAnchors($text);	
 
 	# Make links out of things like `<http://example.com/>`
 	# Must come after _DoAnchors(), because you can use < and >
@@ -582,6 +721,8 @@ sub _DoAnchors {
 			$link_id = lc $link_text;     # for shortcut links like [this][].
 		}
 
+		# Allow automatic cross-references to headers
+		my $label = Header2Label($link_id);
 		if (defined $g_urls{$link_id}) {
 			my $url = $g_urls{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
@@ -593,9 +734,22 @@ sub _DoAnchors {
 				$title =~ s!  _ !$g_escape_table{'_'}!gx;
 				$result .=  " title=\"$title\"";
 			}
+			$result .= _DoAttributes($label);
 			$result .= ">$link_text</a>";
-		}
-		else {
+		} elsif (defined $g_crossrefs{$label}) {
+			my $url = $g_crossrefs{$label};
+			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
+			$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
+			$result = "<a href=\"$url\"";
+			if ( defined $g_titles{$label} ) {
+				my $title = $g_titles{$label};
+				$title =~ s! \* !$g_escape_table{'*'}!gx;
+				$title =~ s!  _ !$g_escape_table{'_'}!gx;
+				$result .=  " title=\"$title\"";
+			}
+			$result .= _DoAttributes($label);
+			$result .= ">$link_text</a>";
+		} else {
 			$result = $whole_match;
 		}
 		$result;
@@ -639,7 +793,6 @@ sub _DoAnchors {
 			$title =~ s!  _ !$g_escape_table{'_'}!gx;
 			$result .=  " title=\"$title\"";
 		}
-
 		$result .= ">$link_text</a>";
 
 		$result;
@@ -662,6 +815,8 @@ sub _DoAnchors {
 		my $link_text   = $2;
 		(my $link_id = lc $2) =~ s{[ ]?\n}{ }g; # lower-case and turn embedded newlines into spaces
 
+		# Allow automatic cross-references to headers
+		my $label = Header2Label($link_id);
 		if (defined $g_urls{$link_id}) {
 			my $url = $g_urls{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
@@ -673,9 +828,22 @@ sub _DoAnchors {
 				$title =~ s!  _ !$g_escape_table{'_'}!gx;
 				$result .=  " title=\"$title\"";
 			}
+			$result .= _DoAttributes($link_id);
 			$result .= ">$link_text</a>";
-		}
-		else {
+		} elsif (defined $g_crossrefs{$label}) {
+			my $url = $g_crossrefs{$label};
+			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
+			$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
+			$result = "<a href=\"$url\"";
+			if ( defined $g_titles{$label} ) {
+				my $title = $g_titles{$label};
+				$title =~ s! \* !$g_escape_table{'*'}!gx;
+				$title =~ s!  _ !$g_escape_table{'_'}!gx;
+				$result .=  " title=\"$title\"";
+			}
+			$result .= _DoAttributes($label);
+			$result .= ">$link_text</a>";
+		} else {
 			$result = $whole_match;
 		}
 		$result;
@@ -723,14 +891,22 @@ sub _DoImages {
 			my $url = $g_urls{$link_id};
 			$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
 			$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
-			$result = "<img src=\"$url\" alt=\"$alt_text\"";
+			
+			my $label = Header2Label($alt_text);
+			$g_crossrefs{$label} = "#$label";
+			if (! defined $g_titles{$link_id}) {
+				$g_titles{$link_id} = $alt_text;
+			}
+			
+			$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
 			if (defined $g_titles{$link_id}) {
 				my $title = $g_titles{$link_id};
 				$title =~ s! \* !$g_escape_table{'*'}!gx;
 				$title =~ s!  _ !$g_escape_table{'_'}!gx;
 				$result .=  " title=\"$title\"";
 			}
-			$result .= $g_empty_element_suffix;
+			$result .= _DoAttributes($link_id);
+			$result .= $g_empty_element_suffix;		
 		}
 		else {
 			# If there's no such link ID, leave intact:
@@ -774,7 +950,12 @@ sub _DoImages {
 		$url =~ s! \* !$g_escape_table{'*'}!gx;		# We've got to encode these to avoid
 		$url =~ s!  _ !$g_escape_table{'_'}!gx;		# conflicting with italics/bold.
 		$url =~ s{^<(.*)>$}{$1};					# Remove <>'s surrounding URL, if present
-		$result = "<img src=\"$url\" alt=\"$alt_text\"";
+
+		my $label = Header2Label($alt_text);
+		$g_crossrefs{$label} = "#$label";
+#		$g_titles{$label} = $alt_text;			# I think this line should not be here
+			
+		$result = "<img id=\"$label\" src=\"$url\" alt=\"$alt_text\"";
 		if (defined $title) {
 			$title =~ s! \* !$g_escape_table{'*'}!gx;
 			$title =~ s!  _ !$g_escape_table{'_'}!gx;
@@ -791,7 +972,10 @@ sub _DoImages {
 
 sub _DoHeaders {
 	my $text = shift;
-
+	my $header = "";
+	my $label = "";
+	my $idString = "";
+		
 	# Setext-style headers:
 	#	  Header 1
 	#	  ========
@@ -799,12 +983,47 @@ sub _DoHeaders {
 	#	  Header 2
 	#	  --------
 	#
-	$text =~ s{ ^(.+?)[ \t]*\n=+[ \t]*\n+ }{
-		"<h1>"  .  _RunSpanGamut($1)  .  "</h1>\n\n";
+	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n=+[ \t]*\n+ }{
+		if (defined $2) {
+			$label = Header2Label($2);
+		} else {
+			$label = Header2Label($1);
+		}
+		$header = _RunSpanGamut($1);
+		$header =~ s/^\s*//s;
+		
+		if ($label ne "") {
+			$g_crossrefs{$label} = "#$label";
+			$g_titles{$label} = _StripHTML($header);
+			$idString = " id=\"$label\"";			
+		} else {
+			$idString = "";
+		}
+		my $h_level = $g_base_header_level;
+		
+		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
 
-	$text =~ s{ ^(.+?)[ \t]*\n-+[ \t]*\n+ }{
-		"<h2>"  .  _RunSpanGamut($1)  .  "</h2>\n\n";
+	$text =~ s{ ^(.+?)(?:\s*(?<!\\)\[([^\[]*?)\])?[ \t]*\n-+[ \t]*\n+ }{
+		if (defined $2) {
+			$label = Header2Label($2);
+		} else {
+			$label = Header2Label($1);
+		}
+		$header = _RunSpanGamut($1);
+		$header =~ s/^\s*//s;
+		
+		if ($label ne "") {
+			$g_crossrefs{$label} = "#$label";
+			$g_titles{$label} = _StripHTML($header);
+			$idString = " id=\"$label\"";			
+		} else {
+			$idString = "";
+		}
+		
+		my $h_level = $g_base_header_level +1;
+		
+		"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 	}egmx;
 
 
@@ -820,11 +1039,29 @@ sub _DoHeaders {
 			[ \t]*
 			(.+?)		# $2 = Header text
 			[ \t]*
+			(?:(?<!\\)\[([^\[]*?)\])?	# $3 = optional label for cross-reference
+			[ \t]*
 			\#*			# optional closing #'s (not counted)
 			\n+
 		}{
-			my $h_level = length($1);
-			"<h$h_level>"  .  _RunSpanGamut($2)  .  "</h$h_level>\n\n";
+			my $h_level = length($1) + $g_base_header_level - 1;
+			if (defined $3) {
+				$label = Header2Label($3);
+			} else {
+				$label = Header2Label($2);
+			}
+			$header = _RunSpanGamut($2);
+			$header =~ s/^\s*//s;
+			
+			if ($label ne "") {
+				$g_crossrefs{$label} = "#$label";
+				$g_titles{$label} = _StripHTML($header);
+				$idString = " id=\"$label\"";			
+			} else {
+				$idString = "";
+			}
+
+			"<h$h_level$idString>"  .  $header  .  "</h$h_level>\n\n";
 		}egmx;
 
 	return $text;
@@ -1019,7 +1256,7 @@ sub _DoCodeBlocks {
 			$codeblock =~ s/\A\n+//; # trim leading newlines
 			$codeblock =~ s/\n+\z//; # trim trailing newlines
 
-			$result = "\n\n<pre><code>" . $codeblock . "\n</code></pre>\n\n";
+			$result = "\n\n<pre><code>" . $codeblock . "</code></pre>\n\n";	# CHANGED: Removed newline for MMD
 
 			$result;
 		}egmx;
@@ -1082,7 +1319,7 @@ sub _EncodeCode {
 # and lose their special Markdown meanings.
 #
     local $_ = shift;
-
+	
 	# Encode all ampersands; HTML entities are not
 	# entities within a Markdown code span.
 	s/&/&amp;/g;
@@ -1117,11 +1354,30 @@ sub _EncodeCode {
 sub _DoItalicsAndBold {
 	my $text = shift;
 
+	# Cave in - `*` and `_` behave differently...  We'll see how it works out
+	
+	
 	# <strong> must go first:
-	$text =~ s{ (\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1 }
+	$text =~ s{ (?<!\w) (\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1 }
 		{<strong>$2</strong>}gsx;
 
-	$text =~ s{ (\*|_) (?=\S) (.+?) (?<=\S) \1 }
+	$text =~ s{ (?<!\w) (\*|_) (?=\S) (.+?) (?<=\S) \1 }
+		{<em>$2</em>}gsx;
+
+	# And now, a second pass to catch nested strong and emphasis special cases
+	$text =~ s{ (?<!\w) (\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1 }
+		{<strong>$2</strong>}gsx;
+
+	$text =~ s{ (?<!\w) (\*|_) (?=\S) (.+?) (?<=\S) \1 }
+		{<em>$2</em>}gsx;
+
+	# And now, allow `*` in the middle of words
+
+	# <strong> must go first:
+	$text =~ s{ (\*\*) (?=\S) (.+?[*]*) (?<=\S) \1 }
+		{<strong>$2</strong>}gsx;
+
+	$text =~ s{ (\*) (?=\S) (.+?) (?<=\S) \1 }
 		{<em>$2</em>}gsx;
 
 	return $text;
@@ -1441,6 +1697,868 @@ sub _Detab {
 	return $text;
 }
 
+#
+# MultiMarkdown Routines
+#
+
+sub _ParseMetaData {
+	my $text = shift;
+	my $clean_text = "";
+	
+	my ($inMetaData, $currentKey) = (1,'');
+	
+	# If only metadata is "Format: complete" then skip
+	
+	if ($text =~ s/^(Format):\s*complete\n(.*?)\n/$2\n/is) {
+		# If "Format: complete" was added automatically, don't force first 
+		#	line of text to be metadata
+		$g_metadata{$1}= "complete";
+		$g_document_format = "complete";
+	}
+	
+	foreach my $line ( split /\n/, $text ) {
+		$line =~ /^$/ and $inMetaData = 0;
+		if ($inMetaData) {
+			if ($line =~ /^([a-zA-Z0-9][0-9a-zA-Z _-]*?):\s*(.*)$/ ) {
+				$currentKey = $1;
+				my $meta = $2;
+				$currentKey =~ s/\s+/ /g;
+				$currentKey =~ s/\s$//;
+				$g_metadata{$currentKey} = $meta;
+				if (lc($currentKey) eq "format") {
+					$g_document_format = lc($g_metadata{$currentKey});
+				}
+				if (lc($currentKey) eq "base url") {
+					$g_base_url = $g_metadata{$currentKey};
+				}
+				if (lc($currentKey) eq "bibliography title") {
+					$g_bibliography_title = $g_metadata{$currentKey};
+					$g_bibliography_title =~ s/\s*$//;
+				}
+				if (lc($currentKey) eq "base header level") {
+					$g_base_header_level = $g_metadata{$currentKey};
+				}
+				if (!$g_metadata_newline{$currentKey}) {
+					$g_metadata_newline{$currentKey} = $g_metadata_newline{default};
+				}
+			} else {
+				if ($currentKey eq "") {
+					# No metadata present
+					$clean_text .= "$line\n";
+					$inMetaData = 0;
+					next;
+				}
+				if ($line =~ /^\s*(.+)$/ ) {
+					$g_metadata{$currentKey} .= "$g_metadata_newline{$currentKey}$1";
+				}
+			}
+		} else {
+			$clean_text .= "$line\n";
+		}
+	}
+		
+	return $clean_text;
+}
+
+sub _StripFootnoteDefinitions {
+	my $text = shift;
+	my $less_than_tab = $g_tab_width - 1;
+
+	while ($text =~ s{
+		\n[ ]{0,$less_than_tab}\[\^([^\n]+?)\]\:[ \t]*# id = $1
+		\n?
+		(.*?)\n{1,2}		# end at new paragraph
+		((?=\n[ ]{0,$less_than_tab}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
+	}
+	{\n}sx)
+	{
+		my $id = $1;
+		my $footnote = "$2\n";
+		$footnote =~ s/^[ ]{0,$g_tab_width}//gm;
+	
+		$g_footnotes{id2footnote($id)} = $footnote;
+	}
+	
+	return $text;
+}
+
+sub _DoFootnotes {
+	my $text = shift;
+	
+	# First, run routines that get skipped in footnotes
+	foreach my $label (sort keys %g_footnotes) {
+		my $footnote = _RunBlockGamut($g_footnotes{$label});
+
+		$footnote = _DoMarkdownCitations($footnote);
+		$g_footnotes{$label} = $footnote;
+	}
+	
+	$text =~ s{
+		\[\^(.+?)\]		# id = $1
+	}{
+		my $result = "";
+		my $id = id2footnote($1);
+		if (defined $g_footnotes{$id} ) {
+			$g_footnote_counter++;
+			if ($g_footnotes{$id} =~ /^(<p>)?glossary:/i) {
+				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see glossary\" class=\"footnote glossary\">$g_footnote_counter</a>";
+			} else {
+				$result = "<a href=\"#fn:$id\" id=\"fnref:$id\" title=\"see footnote\" class=\"footnote\">$g_footnote_counter</a>";
+			}
+			push (@g_used_footnotes,$id);
+		}
+		$result;
+	}xsge;
+	
+	return $text;
+}
+
+sub _FixFootnoteParagraphs {
+	my $text = shift;
+	
+	$text =~ s/^\<p\>\<\/footnote\>/<\/footnote>/gm;
+	
+	return $text;
+}
+
+sub _PrintFootnotes{
+	my $footnote_counter = 0;
+	my $result = "";
+	
+	foreach my $id (@g_used_footnotes) {
+		$footnote_counter++;
+		my $footnote = $g_footnotes{$id};
+		my $footnote_closing_tag = "";
+
+		$footnote =~ s/(\<\/(p(re)?|ol|ul)\>)$//;
+		$footnote_closing_tag = $1;
+		
+		if ($footnote =~ s/^(<p>)?glossary:\s*//i) {
+			# Add some formatting for glossary entries
+
+			$footnote =~ s{
+				^(.*?)				# $1 = term
+				\s*
+				(?:\(([^\(\)]*)\)[^\n]*)?		# $2 = optional sort key
+				\n
+			}{
+				my $glossary = "<span class=\"glossary name\">$1</span>";
+				
+				if ($2) {
+					$glossary.="<span class=\"glossary sort\" style=\"display:none\">$2</span>";
+				};
+				
+				$glossary . ":<p>";	
+			}egsx;
+
+			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+		} else {
+			$result.="<li id=\"fn:$id\">$footnote<a href=\"#fnref:$id\" title=\"return to article\" class=\"reversefootnote\">&#160;&#8617;</a>$footnote_closing_tag</li>\n\n";
+		}
+	}
+	$result .= "</ol>\n</div>";
+
+	if ($footnote_counter > 0) {
+		$result = "\n\n<div class=\"footnotes\">\n<hr$g_empty_element_suffix\n<ol>\n\n".$result;
+	} else {
+		$result = "";
+	}	
+	
+	$result= _UnescapeSpecialChars($result);
+	return $result;
+}
+
+sub Header2Label {
+	my $header = shift;
+	my $label = lc $header;
+	$label =~ s/[^A-Za-z0-9:_.-]//g;		# Strip illegal characters
+	while ($label =~ s/^[^A-Za-z]//g)
+		{};		# Strip illegal leading characters
+	return $label;
+}
+
+sub id2footnote {
+	# Since we prepend "fn:", we can allow leading digits in footnotes
+	my $id = shift;
+	my $footnote = lc $id;
+	$footnote =~ s/[^A-Za-z0-9:_.-]//g;		# Strip illegal characters
+	return $footnote;
+}
+
+
+sub xhtmlMetaData {
+	my $result = qq{<?xml version="1.0" encoding="UTF-8" ?>\n};
+
+	# This screws up xsltproc - make sure to use `-nonet -novalid` if you
+	#	have difficulty
+	if ($g_allow_mathml) {
+		 $result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN"\n\t"http://www.w3.org/TR/2001/REC-MathML2-20010221/dtd/xhtml-math11-f.dtd">
+\n};
+	
+		$result.= qq{<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n};
+	} else {
+		$result .= qq{<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n};
+
+		$result.= qq!<html xmlns="http://www.w3.org/1999/xhtml">\n\t<head>\n!;
+	}
+	
+	$result.= "\t\t<!-- Processed by MultiMarkdown -->\n";
+	
+	foreach my $key (sort keys %g_metadata ) {
+		# Strip trailing spaces
+		$g_metadata{$key} =~ s/(\s)*$//s;
+		
+		# Strip spaces from key
+		my $export_key = $key;
+		$export_key =~ s/\s//g;
+		
+		if (lc($key) eq "title") {
+			$result.= "\t\t<title>" . _EncodeAmpsAndAngles($g_metadata{$key}) . "</title>\n";
+		} elsif (lc($key) eq "css") {
+			$result.= "\t\t<link type=\"text/css\" rel=\"stylesheet\" href=\"$g_metadata{$key}\"$g_empty_element_suffix\n";
+		} elsif (lc($export_key) eq "xhtmlheader") {
+			$result .= "\t\t$g_metadata{$key}\n";
+		} else {
+			my $encodedMeta = _EncodeAmpsAndAngles($g_metadata{$key});
+			$result.= qq!\t\t<meta name="$export_key" content="$encodedMeta"$g_empty_element_suffix\n!;
+		}
+	}
+	$result.= "\t</head>\n";
+	
+	return $result;
+}
+
+sub textMetaData {
+	my $result = "";
+	
+	foreach my $key (sort keys %g_metadata ) {
+		$result .= "$key: $g_metadata{$key}\n";
+	}
+	$result =~ s/\s*\n/<br \/>\n/g;
+	
+	if ($result ne "") {
+		$result.= "\n";
+	}
+	
+	return $result;
+}
+
+sub _ConvertCopyright{
+	my $text = shift;
+	# Convert to an XML compatible form of copyright symbol
+	
+	$text =~ s/&copy;/&#xA9;/gi;
+	
+	return $text;
+}
+
+
+sub _DoTables {
+	my $text = shift;
+	my $less_than_tab = $g_tab_width - 1;
+	
+	# Algorithm inspired by PHP Markdown Extra's table support
+	# <http://www.michelf.com/projects/php-markdown/>
+		
+	# Reusable regexp's to match table
+	
+	my $line_start = qr{
+		[ ]{0,$less_than_tab}
+	}mx;
+	
+	my $table_row = qr{
+		[^\n]*?\|[^\n]*?\n
+	}mx;
+		
+	my $first_row = qr{
+		$line_start
+		\S+.*?\|.*?\n
+	}mx;
+	
+	my $table_rows = qr{
+		(\n?$table_row)
+	}mx;
+	
+	my $table_caption = qr{
+		$line_start
+		\[.*?\][ \t]*\n
+	}mx;
+	
+	my $table_divider = qr{
+		$line_start
+		[\|\-\+\:\.][ \-\+\|\:\.]* \| [ \-\+\|\:\.]* 
+	}mx;
+	
+	my $whole_table = qr{
+		($table_caption)?		# Optional caption
+		($first_row				# First line must start at beginning
+		($table_row)*?)?		# Header Rows
+		$table_divider			# Divider/Alignment definitions
+		$table_rows+			# Body Rows
+		($table_caption)?		# Optional caption
+	}mx;
+	
+	
+	# Find whole tables, then break them up and process them
+	
+	$text =~ s{
+		^($whole_table)			# Whole table in $1
+		(\n|\Z)					# End of file or 2 blank lines
+	}{
+		my $table = $1;
+		
+		# Clean extra spaces at end of lines - 
+		#	they cause the processing to choke
+		$table =~ s/[\t ]*\n/\n/gs;
+		
+		my $result = "<table>\n";
+		my @alignments;
+		my $use_row_header = 1;
+		
+		# Add Caption, if present
+		
+		if ($table =~ s/^$line_start(?:\[\s*(.*)\s*\])?(?:\[\s*(.*?)\s*\])[ \t]*$//m) {
+			my $table_id = "";
+			my $table_caption = "";
+
+			$table_id = Header2Label($2);
+
+			if (defined $1) {
+				$table_caption = $1;
+			} else {
+				$table_caption = $2;
+			}
+			$result .= "<caption id=\"$table_id\">" . _RunSpanGamut($table_caption). "</caption>\n";
+				
+			$g_crossrefs{$table_id} = "#$table_id";
+			$g_titles{$table_id} = "see table";		# captions with "stuff" in them break links
+		}
+				
+		# If a second "caption" is present, treat it as a summary
+		# However, this is not valid in XHTML 1.0 Strict
+		# But maybe in future
+		
+		# A summary might be longer than one line
+		if ($table =~ s/\n$line_start\[\s*(.*?)\s*\][ \t]*\n/\n/s) {
+			# $result .= "<summary>" . _RunSpanGamut($1) . "</summary>\n";
+		}
+		
+		# Now, divide table into header, alignment, and body
+
+		# First, add leading \n in case there is no header
+		
+		$table = "\n" . $table;
+		
+		# Need to be greedy
+		
+		$table =~ s/\n($table_divider)\n(($table_rows)+)//s;
+
+		my $body = "";
+		my $alignment_string = "";
+		if (defined $1){
+			$alignment_string = $1;
+		}
+		if (defined $2){
+			$body = $2;
+		}
+
+		# Process column alignment
+		while ($alignment_string =~ /\|?\s*(.+?)\s*(\||\Z)/gs) {
+			my $cell = _RunSpanGamut($1);
+			if ($cell =~ /\+/){
+				$result .= "<col class=\"extended\"";
+			} else {
+				$result .= "<col";
+			}
+			if ($cell =~ /\:$/) {
+				if ($cell =~ /^\:/) {
+					$result .= " align=\"center\"$g_empty_element_suffix\n";
+					push(@alignments,"center");
+				} else {
+					$result .= " align=\"right\"$g_empty_element_suffix\n";
+					push(@alignments,"right");
+				}
+			} else {
+				if ($cell =~ /^\:/) {
+					$result .= " align=\"left\"$g_empty_element_suffix\n";
+					push(@alignments,"left");
+				} else {
+					if (($cell =~ /^\./) || ($cell =~ /\.$/)) {
+						$result .= " align=\"char\"$g_empty_element_suffix\n";
+						push(@alignments,"char");
+					} else {
+						$result .= "$g_empty_element_suffix\n";
+						push(@alignments,"");
+					}
+				}
+			}
+		}
+		
+		# Process headers
+		$table =~ s/^\n+//s;
+		
+		$result .= "<thead>\n";
+		
+		# Strip blank lines
+		$table =~ s/\n[ \t]*\n/\n/g;
+		
+		foreach my $line (split(/\n/, $table)) {
+			# process each line (row) in table
+			$result .= "<tr>\n";
+			my $count=0;
+			while ($line =~ /\|?\s*([^\|]+?)\s*(\|+|\Z)/gs) {
+				# process contents of each cell
+				my $cell = _RunSpanGamut($1);
+				my $ending = $2;
+				my $colspan = "";
+				if ($ending =~ s/^\s*(\|{2,})\s*$/$1/) {
+					$colspan = " colspan=\"" . length($ending) . "\"";
+				}
+				$result .= "\t<th$colspan>$cell</th>\n";
+				if ( $count == 0) {
+					if ($cell =~ /^\s*$/) {
+						$use_row_header = 1;
+					} else {
+						$use_row_header = 0;
+					}
+				}
+				$count++;
+			}
+			$result .= "</tr>\n";
+		}
+		
+		# Process body
+		
+		$result .= "</thead>\n<tbody>\n";
+
+		foreach my $line (split(/\n/, $body)) {
+			# process each line (row) in table
+			if ($line =~ /^\s*$/) {
+				$result .= "</tbody>\n\n<tbody>\n";
+				next;
+			}
+			$result .= "<tr>\n";
+			my $count=0;
+			while ($line =~ /\|?\s*([^\|]+?)\s*(\|+|\Z)/gs) {
+				# process contents of each cell
+				my $cell = _RunSpanGamut($1);
+				my $ending = "";
+				if ($2 ne ""){
+					$ending = $2;
+				}
+				my $colspan = "";
+				my $cell_type = "td";
+				if ($count == 0 && $use_row_header == 1) {
+					$cell_type = "th";
+				}
+				if ($ending =~ s/^\s*(\|{2,})\s*$/$1/) {
+					$colspan = " colspan=\"" . length($ending) . "\"";
+				}
+				if ($alignments[$count] !~ /^\s*$/) {
+					$result .= "\t<$cell_type$colspan align=\"$alignments[$count]\">$cell</$cell_type>\n";
+				} else {
+					$result .= "\t<$cell_type$colspan>$cell</$cell_type>\n";
+					}
+				$count++;
+			}
+			$result .= "</tr>\n";
+		}
+
+		# Strip out empty <thead> sections
+		$result =~ s/<thead>\s*<\/thead>\s*//s;
+
+		# Handle pull-quotes
+
+		# This might be too specific for my needs.  If others want it
+		# removed, I am open to discussion.
+
+		$result =~ s/<table>\s*<col \/>\s*<tbody>/<table class="pull-quote">\n<col \/>\n<tbody>/s;
+		
+		$result .= "</tbody>\n</table>\n";
+		$result
+	}egmx;
+	
+	my $table_body = qr{
+		(								# wrap whole match in $2
+			
+			(.*?\|.*?)\n 					# wrap headers in $3
+			
+			[ ]{0,$less_than_tab}
+			($table_divider) 	# alignment in $4
+			
+			(							# wrap cells in $5
+				$table_rows
+			)
+		)
+	}mx;
+	
+	return $text;
+}
+
+
+sub _DoAttributes{
+	my $id = shift;
+	my $result = "";
+	
+	if (defined $g_attributes{$id}) {
+		my $attributes = $g_attributes{$id};
+		while ($attributes =~ s/(\S+)="(.*?)"//) {
+			$result .= " $1=\"$2\"";
+		}
+		while ($attributes =~ /(\S+)=(\S+)/g) {
+			$result .= " $1=\"$2\"";
+		}
+	}
+	
+	return $result;
+}
+
+
+sub _StripMarkdownReferences {
+	my $text = shift;
+	my $less_than_tab = $g_tab_width - 1;
+
+	while ($text =~ s{
+		\n\[\#(.+?)\]:[ \t]*	# id = $1
+		\n?
+		(.*?)\n{1,2}			# end at new paragraph
+		((?=\n[ ]{0,$less_than_tab}\S)|\Z)	# Lookahead for non-space at line-start, or end of doc
+	}
+	{\n}sx)
+	{
+		my $id = $1;
+		my $reference = "$2\n";
+
+		$reference =~ s/^[ ]{0,$g_tab_width}//gm;
+		
+		$reference = _RunBlockGamut($reference);
+
+		# strip leading and trailing <p> tags (they will be added later)
+		$reference =~ s/^\<p\>//s;
+		$reference =~ s/\<\/p\>\s*$//s;
+		
+		$g_references{$id} = $reference;
+	}
+	
+	return $text;
+}
+
+sub _DoMarkdownCitations {
+	my $text = shift;
+	
+	$text =~ s{				# Allow for citations without locator to be written
+		\[\#([^\[]*?)\]		# in usual manner, e.g. [#author][] rather than
+		[ ]?				# [][#author]
+		(?:\n[ ]*)?
+		\[\s*\]
+	}{
+		"[][#$1]";
+	}xsge;
+	
+	$text =~ s{
+		\[([^\[]*?)\]		# citation text = $1
+		[ ]?			# one optional space
+		(?:\n[ ]*)?		# one optional newline followed by spaces
+		\[\#(.*?)\]		# id = $2
+	}{
+		my $result;
+		my $anchor_text = $1;
+		my $id = $2;
+		my $count;
+
+		# implement equivalent to \citet
+		my $textual_string = "";
+		if ($anchor_text =~ s/^(.*?);\s*//) {
+			$textual_string = "<span class=\"textual citation\">$1</span>";
+		}
+
+		if (defined $g_references{$id} ) {
+			my $citation_counter=0;
+			
+			# See if citation has been used before
+			foreach my $old_id (@g_used_references) {
+				$citation_counter++;
+				$count = $citation_counter if ($old_id eq $id);
+			}
+	
+			if (! defined $count) {
+				$g_citation_counter++;
+				$count = $g_citation_counter;
+				push (@g_used_references,$id);
+			}
+			
+			$result = "<span class=\"markdowncitation\">$textual_string (<a href=\"#$id\" title=\"see citation\">$count</a>";
+			
+			if ($anchor_text ne "") {
+				$result .=", <span class=\"locator\">$anchor_text</span>";
+			}
+			
+			$result .= ")</span>";
+		} else {
+			# No reference exists
+			$result = "<span class=\"externalcitation\">$textual_string (<a id=\"$id\">$id</a>";
+
+			if ($anchor_text ne "") {
+				$result .=", <span class=\"locator\">$anchor_text</span>";
+			}
+			
+			$result .= ")</span>";
+		}
+		
+		if (Header2Label($anchor_text) eq "notcited"){
+			$result = "<span class=\"notcited\" id=\"$id\"/>";
+		}
+		$result;
+	}xsge;
+	
+	return $text;
+
+}
+
+sub _PrintMarkdownBibliography{
+	my $citation_counter = 0;
+	my $result;
+	
+	foreach my $id (@g_used_references) {
+		$citation_counter++;
+		$result.="<div id=\"$id\"><p>[$citation_counter] <span class=\"item\">$g_references{$id}</span></p></div>\n\n";
+	}
+	$result .= "</div>";
+
+	if ($citation_counter > 0) {
+		$result = "\n\n<div class=\"bibliography\">\n<hr$g_empty_element_suffix\n<p>$g_bibliography_title</p>\n\n".$result;
+	} else {
+		$result = "";
+	}	
+	
+	return $result;
+}
+
+sub _GenerateImageCrossRefs {
+	my $text = shift;
+
+	#
+	# First, handle reference-style labeled images: ![alt text][id]
+	#
+	$text =~ s{
+		(				# wrap whole match in $1
+		  !\[
+		    (.*?)		# alt text = $2
+		  \]
+
+		  [ ]?				# one optional space
+		  (?:\n[ ]*)?		# one optional newline followed by spaces
+
+		  \[
+		    (.*?)		# id = $3
+		  \]
+
+		)
+	}{
+		my $result;
+		my $whole_match = $1;
+		my $alt_text    = $2;
+		my $link_id     = lc $3;
+
+		if ($link_id eq "") {
+			$link_id = lc $alt_text;     # for shortcut links like ![this][].
+		}
+
+		$alt_text =~ s/"/&quot;/g;
+		if (defined $g_urls{$link_id}) {
+			my $label = Header2Label($alt_text);
+			$g_crossrefs{$label} = "#$label";
+		}
+		else {
+			# If there's no such link ID, leave intact:
+			$result = $whole_match;
+		}
+
+		$whole_match;
+	}xsge;
+
+	#
+	# Next, handle inline images:  ![alt text](url "optional title")
+	# Don't forget: encode * and _
+
+	$text =~ s{
+		(				# wrap whole match in $1
+		  !\[
+		    (.*?)		# alt text = $2
+		  \]
+		  \(			# literal paren
+		  	[ \t]*
+			<?(\S+?)>?	# src url = $3
+		  	[ \t]*
+			(			# $4
+			  (['"])	# quote char = $5 '
+			  (.*?)		# title = $6
+			  \5		# matching quote
+			  [ \t]*
+			)?			# title is optional
+		  \)
+		)
+	}{
+		my $result;
+		my $whole_match = $1;
+		my $alt_text    = $2;
+
+		$alt_text =~ s/"/&quot;/g;
+		my $label = Header2Label($alt_text);
+		$g_crossrefs{$label} = "#$label";
+		$whole_match;
+	}xsge;
+
+	return $text;
+}
+
+sub _FindMathEquations{
+	my $text = shift;
+	
+	$text =~ s{
+		(\<math[^\>]*)id=\"(.*?)\"> 	# "
+	}{
+		my $label = Header2Label($2);
+		my $header = _RunSpanGamut($2);
+		
+		$g_crossrefs{$label} = "#$label";
+		$g_titles{$label} = $header;
+		
+		$1 . "id=\"$label\">";
+	}xsge;
+	
+	return $text;
+}
+
+sub _DoMathSpans {
+	# Based on Gruber's _DoCodeSpans
+	
+	my $text = shift;
+	my $display_as_block = 0;	
+	$display_as_block = 1 if ($text =~ /^<<[^\>\>]*>>$/);
+
+	$text =~ s{
+			(?<!\\)		# Character before opening << can't be a backslash
+			(<<)		# $1 = Opening 
+			(.+?)		# $2 = The code block
+			(?:\[(.+)\])?	# $3 = optional label
+			(>>)
+		}{
+ 			my $m = "$2";
+			my $label = "";
+			my @attr = (xmlns=>"http://www.w3.org/1998/Math/MathML");
+			
+			if (defined $3) {
+				$label = Header2Label($3);
+				my $header = _RunSpanGamut($3);
+
+				$g_crossrefs{$label} = "#$label";
+				$g_titles{$label} = $header;
+			}
+ 			$m =~ s/^[ \t]*//g; # leading whitespace
+ 			$m =~ s/[ \t]*$//g; # trailing whitespace
+			push(@attr,(id=>"$label")) if ($label ne "");
+			push(@attr,(display=>"block")) if ($display_as_block == 1);
+
+			$m = $mathParser->TextToMathML($m,\@attr); 
+			"$m";
+		}egsx;
+
+	return $text;
+}
+
+sub _DoDefinitionLists {
+	# Uses the syntax proposed by Michel Fortin in PHP Markdown Extra
+	
+	my $text = shift;
+	my $less_than_tab = $g_tab_width -1;
+	
+	my $line_start = qr{
+		[ ]{0,$less_than_tab}
+	}mx;
+	
+	my $term = qr{
+		$line_start
+		[^:\s][^\n]*\n
+	}sx;
+	
+	my $definition = qr{
+		\n?[ ]{0,$less_than_tab}
+		\:[ \t]+(.*?)\n
+		((?=\n?\:)|\n|\Z)	# Lookahead for next definition, two returns,
+							# or the end of the document
+	}sx;
+	
+	my $definition_block = qr{
+		((?:$term)+)				# $1 = one or more terms
+		((?:$definition)+)			# $2 = by one or more definitions
+	}sx;
+	
+	my $definition_list = qr{
+		(?:$definition_block\n*)+		# One ore more definition blocks
+	}sx;
+	
+	$text =~ s{
+		($definition_list)			# $1 = the whole list
+	}{
+		my $list = $1;
+		my $result = $1;
+		
+		$list =~ s{
+			(?:$definition_block)\n*
+		}{
+			my $terms = $1;
+			my $defs = $2;
+
+			$terms =~ s{
+				[ ]{0,$less_than_tab}
+				(.*)
+				\s*
+			}{
+				my $term = $1;
+				my $result = "";
+				$term =~ s/^\s*(.*?)\s*$/$1/;
+				if ($term !~ /^\s*$/){
+					$result = "<dt>" . _RunSpanGamut($1) . "</dt>\n";
+				}
+				$result;
+			}xmge;
+			
+			$defs =~ s{
+				$definition
+			}{
+				my $def = $1 . "\n";
+				$def =~ s/^[ ]{0,$g_tab_width}//gm;
+				"<dd>\n" . _RunBlockGamut($def) . "\n</dd>\n";
+			}xsge;
+			
+			$terms . $defs . "\n";
+		}xsge;
+		
+		"<dl>\n" . $list . "</dl>\n\n";
+	}xsge;
+	
+	return $text
+}
+
+sub _UnescapeComments{
+	# Remove encoding inside comments
+	# Based on proposal by Toras Doran (author of Text::MultiMarkdown)
+
+	my $text = shift;
+	$text =~ s{
+		(?<=<!--) # Begin comment
+		(.*?)     # Anything inside
+		(?=-->)   # End comments
+	}{
+		my $t = $1;
+		$t =~ s/&amp;/&/g;
+		$t =~ s/&lt;/</g;
+		$t;
+	}egsx;
+
+	return $text;
+}
 
 1;
 
@@ -1451,16 +2569,21 @@ __END__
 
 =head1 NAME
 
-B<Markdown>
+B<MultiMarkdown>
 
 
 =head1 SYNOPSIS
 
-B<Markdown.pl> [ B<--html4tags> ] [ B<--version> ] [ B<-shortversion> ]
+B<MultiMarkdown.pl> [ B<--html4tags> ] [ B<--version> ] [ B<-shortversion> ]
     [ I<file> ... ]
 
 
 =head1 DESCRIPTION
+
+MultiMarkdown is an extended version of Markdown. See the website for more
+information.
+
+	http://fletcherpenney.net/multimarkdown/
 
 Markdown is a text-to-HTML filter; it translates an easy-to-read /
 easy-to-write structured text format into HTML. Markdown's text format
@@ -1516,129 +2639,33 @@ Display the short-form version number.
 To file bug reports or feature requests (other than topics listed in the
 Caveats section above) please send email to:
 
-    support@daringfireball.net
+    support@daringfireball.net (for Markdown issues)
+    
+    owner@fletcherpenney.net (for MultiMarkdown issues)
 
 Please include with your report: (1) the example input; (2) the output
-you expected; (3) the output Markdown actually produced.
-
-
-=head1 VERSION HISTORY
-
-See the readme file for detailed release notes for this version.
-
-1.0.2b8 - Wed 09 May 2007
-
-	+	Fixed bug with nested raw HTML tags that contained
-		attributes. The problem is that it uses a backreference in
-		the expression that it passes to gen_extract_tagged, which
-		is broken when Text::Balanced wraps it in parentheses.
-
-		Thanks to Matt Kraai for the patch.
-	
-	+	Now supports URLs containing literal parentheses, such as:
-	
-			http://en.wikipedia.org/wiki/WIMP_(computing)
-		
-		Such parentheses may be arbitrarily nested, but must be
-		balanced.
-
-
-1.0.2b7
-
-	+	Changed shebang line from "/usr/bin/perl" to "/usr/bin/env perl"
-	
-	+	Now only trim trailing newlines from code blocks, instead of trimming
-		all trailing whitespace characters.
-
-
-1.0.2b6 - Mon 03 Apr 2006
-
-	+	Fixed bad performance bug in new `Text::Balanced`-based block-level parser.
-
-
-1.0.2b5 - Thu 08 Dec 2005
-
-	+	Fixed bug where this:
-	
-			[text](http://m.com "title" )
-			
-		wasn't working as expected, because the parser wasn't allowing for spaces
-		before the closing paren.
-
-
-1.0.2b4 - Thu 08 Sep 2005
-
-	+	Filthy hack to support markdown='1' in div tags, because I need it
-		to write today's fireball.
-	
-	+	First crack at a new, smarter, block-level HTML parser.
-
-1.0.2b3 - Thu 28 Apr 2005
-
-	+	_DoAutoLinks() now supports the 'dict://' URL scheme.
-
-	+	PHP- and ASP-style processor instructions are now protected as
-		raw HTML blocks.
-
-			<? ... ?>
-			<% ... %>
-
-	+	Workarounds for regressions introduced with fix for "backticks within
-		tags" bug in 1.0.2b1. The fix is to allow `...` to be turned into
-		<code>...</code> within an HTML tag attribute, and then to turn
-		these spurious `<code>` tags back into literal backtick characters
-		in _EscapeSpecialCharsWithinTagAttributes().
-
-		The regression was caused because in the fix, we moved
-		_EscapeSpecialCharsWithinTagAttributes() ahead of _DoCodeSpans()
-		in _RunSpanGamut(), but that's no good. We need to process code
-		spans first, otherwise we can get tripped up by something like this:
-
-			`<test a="` content of attribute `">`
-
-
-1.0.2b2 - 20 Mar 2005
-
-	+	Fix for nested sub-lists in list-paragraph mode. Previously we got
-		a spurious extra level of `<p>` tags for something like this:
-
-			*	this
-
-				*	sub
-
-				that
-
-	+	Experimental support for [this] as a synonym for [this][].
-		(Note to self: No test yet for this.)
-		Be sure to test, e.g.: [permutations of this sort of [thing][].]
-
-
-1.0.2b1 - 28  Feb 2005
-
-	+	Fix for backticks within HTML tag: <span attr='`ticks`'>like this</span>
-
-	+	Fix for escaped backticks still triggering code spans:
-
-			There are two raw backticks here: \` and here: \`, not a code span
-
-1.0.1 - 14 Dec 2004
-
-1.0 - 28 Aug 2004
+you expected; (3) the output (Multi)Markdown actually produced.
 
 
 =head1 AUTHOR
 
     John Gruber
-    http://daringfireball.net
+    http://daringfireball.net/
 
     PHP port and other contributions by Michel Fortin
-    http://michelf.com
+    http://michelf.com/
 
+    MultiMarkdown changes by Fletcher Penney
+    http://fletcherpenney.net/
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2003-2005 John Gruber   
+Original Markdown Code Copyright (c) 2003-2007 John Gruber   
 <http://daringfireball.net/>   
+All rights reserved.
+
+MultiMarkdown changes Copyright (c) 2005-2009 Fletcher T. Penney   
+<http://fletcherpenney.net/>   
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -1669,3 +2696,4 @@ negligence or otherwise) arising in any way out of the use of this
 software, even if advised of the possibility of such damage.
 
 =cut
+
