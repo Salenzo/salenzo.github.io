@@ -40,7 +40,11 @@
 
 <footer>
   Copyright © Ŝalenzo<br>
-  Powered by Ŝanity & <a href="https://www.php.net/"><img src="/assets/img/php-power-black.png" alt="Powered by PHP"></a> <?= phpversion() ?>
+  Powered by Ŝanity &
+	<a href="https://www.php.net/">
+		<img src="/assets/img/php-power-black.png" alt="Powered by PHP" style="vertical-align: middle;">
+	</a>
+	<a href="/phpinfo.html" title="&lt;?php phpinfo(); ?&gt;"><?= phpversion() ?></a>
 </footer>
 
 <?php return;
