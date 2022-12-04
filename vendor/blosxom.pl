@@ -28,7 +28,7 @@ $blog_encoding = "UTF-8";
 $datadir = "$FindBin::Bin/../src";
 
 # What's my preferred base URL for this blog (leave blank for automatic)?
-$url = "";
+$url = "/";
 
 # Should I stick only to the datadir for items or travel down the
 # directory hierarchy looking for items?  If so, to what depth?
@@ -36,7 +36,7 @@ $url = "";
 $depth = 0;
 
 # How many entries should I show on the home page?
-$num_entries = 3;
+$num_entries = 114514;
 
 # What file extension signifies a blosxom entry?
 $file_extension = "md";

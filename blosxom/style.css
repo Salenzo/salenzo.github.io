@@ -1,0 +1,87 @@
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Verdana", "Geneva", "Arial", "SimSun", sans-serif;
+  font-size: 10px;
+  background-color: black;
+  color: #ccc;
+}
+
+a {
+  color: white;
+  text-decoration-skip-ink: none;
+}
+
+header {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ace;
+}
+
+h4 {
+  font-size: 12px;
+  font-weight: bold;
+  color: #ace;
+}
+
+footer {
+  text-align: center;
+}
+
+footer img {
+  vertical-align: middle;
+}
+
+.markdown-logo {
+  position: relative;
+  display: inline-block;
+  zoom: .2421875;
+  border: 10px solid;
+  width: 208px;
+  height: 128px;
+  border-radius: 15px;
+  padding: 20px;
+  vertical-align: middle;
+}
+
+.markdown-logo>.character {
+  width: 80px;
+  height: 100%;
+  border: 20px;
+  border-style: none solid;
+  overflow: hidden;
+}
+
+.markdown-logo>.character>.bevel {
+  /* 108/\sqrt2 */
+  width: 76.36753236814714px;
+  height: 76.36753236814714px;
+  /* 29/\sqrt2 */
+  border: 20.506096654409877px solid;
+  transform: translate(-18.18376618407357px, -38.18376618407357px) scaleX(.8) rotate(45deg);
+  transform-origin: center;
+}
+
+.markdown-logo>.stem {
+  position: absolute;
+  width: 20px;
+  height: 48px;
+  right: 34px;
+  top: 20px;
+  background-color: currentcolor;
+}
+
+.markdown-logo>.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  bottom: 20px;
+  right: 14px;
+  border: solid transparent;
+  border-width: 34px 30px 0 30px;
+  border-top-color: currentcolor;
+}

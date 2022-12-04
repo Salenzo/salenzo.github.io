@@ -11,6 +11,7 @@ mkdir -p _site
 vendor/blosxom.pl -password=password
 
 # Bundle all CSS files into one.
+cp blosxom/style.css _site/style.css
 
 # The infamous flash of invisible text is actually desired in this case as jsMath fonts' encoding differs from font encodings designed for general text.
 ls -1 src/assets/jsMath/fonts | awk -F. '{
@@ -19,7 +20,7 @@ ls -1 src/assets/jsMath/fonts | awk -F. '{
 	print "  src: local(" $1 "), url(assets/jsMath/fonts/" $0 ");"
 	print "  font-display: block;"
 	print "}"
-}' >> _site/styles.css
+}' >> _site/style.css
 
 QUERY_STRING=114 vendor/mimetex.cgi | (awk -F ": " '
 $1 == "Vertical-Align" {

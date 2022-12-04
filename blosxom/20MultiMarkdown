@@ -12,8 +12,9 @@
 # MultiMarkdown changes Copyright (c) 2005-2009 Fletcher T. Penney
 #	<http://fletcherpenney.net/>
 #
-# MultiMarkdown Version 2.0.b6
+# Ŝalenzo changes Copyright © 2022 Frog Chen
 #
+# Based on MultiMarkdown Version 2.0.b6
 # Based on Markdown.pl 1.0.2b8 -  Wed 09 May 2007
 #
 #
@@ -32,32 +33,10 @@ use strict;
 use warnings;
 
 use File::Basename;
-
-eval {require MT};  # Test to see if we're running in MT.
-unless ($@) {
-	require Text::ASCIIMathML;
-} else {	# Otherwise look for ASCIIMathML.pm next to MultiMarkdown.pl
-	my $me = $0;				# Where am I?
-
-	# Am I running in Windoze?
-	my $os = $^O;
-
-	# Get just the directory portion
-	if ($os =~ /MSWin/) {
-		$me = dirname($me) . "\\";
-	} else {
-		$me = dirname($me) . "/"; 
-	}
-	require $me ."ASCIIMathML.pm";
-}
-
-
 use Digest::MD5 qw(md5_hex);
 use vars qw($VERSION $g_use_metadata $g_base_url
 	$g_bibliography_title $g_allow_mathml $g_base_header_level $mathParser);
 $VERSION = '2.0.b6';
-
-$mathParser = new Text::ASCIIMathML();
 
 ## Disabled; causes problems under Perl 5.6.1:
 # use utf8;
@@ -2460,8 +2439,7 @@ sub _DoMathSpans {
 			push(@attr,(id=>"$label")) if ($label ne "");
 			push(@attr,(display=>"block")) if ($display_as_block == 1);
 
-			$m = $mathParser->TextToMathML($m,\@attr); 
-			"$m";
+			$m;
 		}egsx;
 
 	return $text;

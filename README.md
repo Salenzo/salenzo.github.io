@@ -14,7 +14,7 @@
     - `pip install -r requirements.txt; npm install; mkdocs serve --watch-theme`
 3. [salenzo.neocities.org（在建） ![GitHub Actions workflow](https://github.com/Salenzo/salenzo.github.io/actions/workflows/deploy.yml/badge.svg)](https://salenzo.neocities.org/)
     - 特色：超古老的静态网站生成器工具链
-    - [Blosxom](https://blosxom.sourceforge.net/) + [Markdown.pl](https://daringfireball.net/projects/markdown/) + [mimeTeX](https://ctan.org/pkg/mimetex) & [jsMath](https://www.math.union.edu/~dpvc/jsMath/)
+    - [Blosxom](https://blosxom.sourceforge.net/) + [MultiMarkdown.pl](https://github.com/fletcher/MultiMarkdown) + [mimeTeX](https://ctan.org/pkg/mimetex) & [jsMath](https://www.math.union.edu/~dpvc/jsMath/)
     - `./build.sh`（需要C编译器、带CGI模块的Perl、Bash、AWK）
 4. [salenzo.vercel.app（在建） ![Vercel](https://therealsujitk-vercel-badge.vercel.app/?app=salenzo)](https://salenzo.vercel.app/)
     - 特色：一种很新的静态网站生成器
