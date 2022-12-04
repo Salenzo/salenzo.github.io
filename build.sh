@@ -14,13 +14,17 @@ vendor/blosxom.pl -password=password
 cp blosxom/style.css _site/style.css
 
 # The infamous flash of invisible text is actually desired in this case as jsMath fonts' encoding differs from font encodings designed for general text.
-ls -1 src/assets/jsMath/fonts | awk -F. '{
-	print "@font-face {"
-	print "  font-family: " $1 ";"
-	print "  src: local(" $1 "), url(assets/jsMath/fonts/" $0 ");"
-	print "  font-display: block;"
-	print "}"
-}' >> _site/style.css
+for filename in src/assets/jsMath/fonts/*.ttf
+do
+	family="$(basename -s .ttf "$filename")"
+	cat <<EOF >> _site/style.css
+@font-face {
+	font-family: $family;
+	src: local($family), url(data:image/svg+xml;base64,$(base64 --wrap=0 "$filename"));
+	font-display: block;
+}
+EOF
+done
 
 QUERY_STRING=114 vendor/mimetex.cgi | (awk -F ": " '
 $1 == "Vertical-Align" {

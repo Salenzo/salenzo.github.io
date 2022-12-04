@@ -12,7 +12,11 @@ require 'net/http'
 
 class NeocitiesPusher
   API_URI = URI.parse("https://neocities.org/api/")
-  FILE_TYPES = %w(.asc .atom .bin .css .csv .dae .eot .epub .geojson .gif .gltf .htm .html .ico .jpeg .jpg .js .json .key .kml .knowl .less .manifest .markdown .md .mf .mid .midi .mtl .obj .opml .otf .pdf .pgp .png .rdf .rss .sass .scss .svg .text .tsv .ttf .txt .webapp .webmanifest .webp .woff .woff2 .xcf .xml)
+  # While .ttf, .otf, .woff and .woff2 are whitelisted,
+  # certain font files cause Neocities to return the following error.
+  #   An unhandled lowlevel error occurred. The application logs may have details.
+  # Fonts are thus banned here.
+  FILE_TYPES = %w(.asc .atom .bin .css .csv .dae .eot .epub .geojson .gif .gltf .htm .html .ico .jpeg .jpg .js .json .key .kml .knowl .less .manifest .markdown .md .mf .mid .midi .mtl .obj .opml .pdf .pgp .png .rdf .rss .sass .scss .svg .text .tsv .txt .webapp .webmanifest .webp .xcf .xml)
 
   def initialize(api_key = ENV["NEOCITIES_TOKEN"])
     raise "Neocities API key missing" if api_key.nil?
