@@ -107,8 +107,9 @@ jobs:
     - run: |
         # Deploy to Neocities with a custom script.
         ./build.sh
-        echo "Hello, Neocities!" > index.html
+        pushd _site
         mv 404.html not_found.html || true
         ../neocities.rb
+        popd
       env:
         NEOCITIES_TOKEN: ${{ secrets.NEOCITIES_TOKEN }}
