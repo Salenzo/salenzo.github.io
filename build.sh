@@ -1,21 +1,14 @@
 #!/bin/bash
 
+set -e
 cd "$(dirname $0)"
-
-# Blosxom takes mtime as the post date.
-# While plugins exist to let metadata take over, they are complex, because the hook is big.
-# Since we manage history with Git, it's easier to just adhere to Blosxom's convention.
-find src -name '*.md' -not -path 'src/post/*' -exec touch -t 197001010000 {} +
-for filename in src/post/????-??-??.md
-do
-	touch -d $(basename -s .md "$filename") "$filename"
-done
 
 [ vendor/mimetex.cgi -nt "$0" ] || \
 	cc -DAA -DINPUTOK -DWHITE \
 		vendor/mimetex/mimetex.c vendor/mimetex/gifsave.c -lm -o vendor/mimetex.cgi
 
-vendor/blosxom.pl -password=password -all=1
+mkdir -p _site
+vendor/blosxom.pl -password=password
 
 # Bundle all CSS files into one.
 

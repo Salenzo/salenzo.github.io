@@ -2,15 +2,12 @@ package slzite;
 
 use warnings;
 use strict;
-use English;
-use File::Basename;
 use Time::Local;
 use File::Find;
 use File::stat;
 use File::Copy;
 use File::Path;
 use FileHandle;
-use Data::Dumper;
 
 sub start {
 	# Ensure that this plugin is enabled only when building statically.
@@ -20,15 +17,81 @@ sub start {
 sub template {
 	return sub {
 		my ($path, $chunk, $flavour) = @_;
-		if ($flavour eq "rss") {
-			# Use Blosxom's built-in RSS template.
-			return join "", $blosxom::template{$flavour}{$chunk};
-		} else {
-			# Customized flavours are stored in the plugin directory.
-			open(my $fh, "< $blosxom::plugin_dir/$chunk.$flavour");
+		# Customized flavours are stored in the plugin directory.
+		if (open(my $fh, "< $blosxom::plugin_dir/$chunk.$flavour")) {
 			return join "", <$fh>;
-		}
+		} else {
+			# Use Blosxom's built-in RSS etc., templates.
+			return join "", $blosxom::template{$flavour}{$chunk};
+		};
 	};
+}
+
+sub entries {
+	return sub {
+		my (%files, %indexes);
+		find(sub {
+			my $src = $File::Find::name;
+			if (
+				$src =~ m!^$blosxom::datadir/((.+)/([^\.].*)\.$blosxom::file_extension)$!
+				or $src =~ m!^$blosxom::datadir/(()([^\.].*)\.$blosxom::file_extension)$!
+			) {
+				# Read post date from the front matter.
+				my $date = extract_date($src) or timegm(0, 0, 0, 1, 0, 1970);
+
+				# Add the file and its date to the hash of files.
+				$files{$src} = $date;
+
+				# Add indices to be statically rendered if the index has not been overriden.
+				#my $index_post = "$blosxom::datadir/$2/index.$blosxom::file_extension";
+				my $static_file = "$blosxom::static_dir/$2/index." . $blosxom::static_flavours[0];
+				#! -e $index_post and 
+				if ((! -f $static_file or -M $static_file > -M $src)) {
+					$indexes{$2} = 1;
+					my $d = join("/", (blosxom::nice_date($date))[5, 2, 3]);
+					$indexes{$d} = $d;
+					$indexes{$1} = 1;
+				}
+			} elsif ($src =~ m!^$blosxom::datadir(.*?/?)([^/]*?\.?)([^\.]*?)$!) {
+				# Copy over the entire data tree to the output directory so that static assets can be served out of there.
+				my $dest = "$blosxom::static_dir$1$2$3";
+				if (-d $src) {
+					# Mirror a directory.
+					-e $dest or mkpath($dest);
+				} elsif ($3 ne $blosxom::file_extension) {
+					# Check if the file needs to be updated.
+					# -M returns the age of the file since the main script has started, so the bigger, the older.
+					if (! -e $dest || -M $dest > -M $src) {
+						print "$src → $dest\n";
+						copy($src, $dest);
+					}
+				}
+			}
+		}, $blosxom::datadir);
+		return (\%files, \%indexes);
+	};
+}
+
+# extract_date(filename) reads the date from the post front matter.
+sub extract_date {
+	open(my $fh, shift);
+	my $inside_front_matter = 0;
+	while (<$fh>) {
+		if ($inside_front_matter) {
+			if (/^\s*date:\s*(\d\d\d\d)-(\d\d)-(\d\d)/) {
+				close File;
+				return timegm(0, 0, 0, $3, $2 - 1, $1);
+			} elsif (/^---$/) {
+				close File;
+				return 0;
+			}
+		} elsif (/^---$/) {
+			$inside_front_matter = 1;
+		} else {
+			return 0;
+		}
+	}
+	return 0;	
 }
 
 sub story {
@@ -51,28 +114,6 @@ sub story {
 	$$title_ref = $1 || $2;
 	$$body_ref = $body;
 
-	return 1;
-}
-
-sub end {
-	# Copy over the entire data tree to the output directory so that static assets can be served out of there.
-	find(sub {
-		my $src = $File::Find::name;
-		if ($src =~ m!^$blosxom::datadir(.*?/?)([^/]*?\.?)([^\.]*?)$!) {
-			my $dest = "$blosxom::static_dir$1$2$3";
-			if (-d $src && ! -e $dest) {
-				# Mirror a directory.
-				mkpath($dest);
-			} elsif ($3 ne $blosxom::file_extension) {
-				# Check if the file needs to be updated.
-				# -M returns the age of the file since the main script has started, so the bigger, the older.
-				if (! -e $dest || -M $dest > -M $src) {
-					print "$src → $dest\n";
-					copy($src, $dest);
-				}
-			}
-		}
-	}, $blosxom::datadir);
 	return 1;
 }
 

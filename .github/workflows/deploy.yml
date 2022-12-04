@@ -106,8 +106,7 @@ jobs:
         bundler-cache: true
     - run: |
         # Deploy to Neocities with a custom script.
-        mkdir _neocities
-        cd _neocities
+        ./build.sh
         echo "Hello, Neocities!" > index.html
         mv 404.html not_found.html || true
         ../neocities.rb
