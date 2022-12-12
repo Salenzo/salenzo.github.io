@@ -8,6 +8,9 @@ use File::stat;
 use File::Copy;
 use File::Path;
 use FileHandle;
+use URI::Escape;
+
+use vars qw($w3c_validator_url);
 
 sub start {
 	# Ensure that this plugin is enabled only when building statically.
@@ -110,6 +113,11 @@ sub head {
 		$$head_ref .= qq{<div class="readme">$readme</div><hr>};
 		close $fh;
 	}
+
+	# Make the W3C Markup Validator URL.
+	$w3c_validator_url = "https://salenzo.neocities.org/$path";
+	$w3c_validator_url = uri_escape($w3c_validator_url);
+	$w3c_validator_url = "http://validator.w3.org/check?uri=$w3c_validator_url";
 
 	return 1;
 }
