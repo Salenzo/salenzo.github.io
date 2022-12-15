@@ -27,3 +27,5 @@
 6. [salenzo.pages.dev（在建）](https://salenzo.pages.dev/)
     - 特色：
     -
+
+![完整语言列表](https://salenzo.github.io/languages.svg)

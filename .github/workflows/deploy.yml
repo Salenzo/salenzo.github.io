@@ -50,6 +50,38 @@ jobs:
         ruby-version: "3.1"
         bundler-cache: true
     - run: bundle exec jekyll build
+    # Generate a full language spectrum for this repository to be linked in README.md.
+    - run: |
+        (
+          curl -L "https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml" \
+            | yq 'map_values({ color: (.color // "#ccc") })'
+          curl -LH 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
+            "https://api.github.com/repos/${{ github.repository }}/languages"
+        ) | jq --slurp --raw-output '
+          (.[1] | length) as $count |
+          (.[1] | to_entries | map(.value) | max | log2) as $logmax |
+          "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"480\" height=\"\($count * 20)\" font-family=\"Courier\" font-size=\"16\">",
+          (
+            JOIN(
+              .[0];
+              (.[1] | to_entries | sort_by(-.value) | to_entries | .[] | {
+                index: .key,
+                language: .value.key,
+                bytes: .value.value,
+                width: ((.value.value | log2) / $logmax * 300),
+                color: .value.color
+              });
+              .language;
+              add
+            ) |
+            "<g transform=\"translate(0 \(.index * 20))\">",
+            "<rect width=\"480\" height=\"20\" fill=\"\(if .index % 2 == 0 then "ghostwhite" else "#eee" end)\" />",
+            @html "<text y=\"14\">\(.language)</text>",
+            "<rect x=\"100\" width=\"\(.width)\" height=\"20\" fill=\"\(.color)\" />",
+            "<text x=\"\(.width + 100)\" y=\"14\">\(.bytes)</text>","</g>"
+          ),
+          "</svg>"
+        ' > _site/languages.svg
     - uses: actions/upload-pages-artifact@v1
     - uses: actions/deploy-pages@v1
 
@@ -73,6 +105,8 @@ jobs:
         # Mirror to GitLab.
         # This personal, private repository is for Vercel, which doesn't accept organization repositories as sources.
         git push "https://$USERNAME:$PASSWORD@gitlab.com/satgo1546/salenzo.github.io.git" main --force
+        
+        # TODO: set GitLab CI to manual mode and trigger GitLab manually here
 
         # Run GitLab CI/CD pipelines using GitHub Actions as a runner to deploy to GitLab Pages.
         git push "https://$USERNAME:$PASSWORD@gitlab.com/salenzo/salenzo.gitlab.io.git" --all --force
