@@ -53,8 +53,11 @@ jobs:
     # Generate a full language spectrum for this repository to be linked in README.md.
     - run: |
         (
+          # Beware that two different tools are called yq and GitHub provides the standalone one written in Go.
+          # https://github.com/mikefarah/yq
+          # https://github.com/kislyuk/yq
           curl -L "https://raw.githubusercontent.com/github/linguist/master/lib/linguist/languages.yml" \
-            | yq 'map_values({ color: (.color // "#ccc") })'
+            | yq -o json 'map_values({ "color": (.color // "#ccc") })'
           curl -LH 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' \
             "https://api.github.com/repos/${{ github.repository }}/languages"
         ) | jq --slurp --raw-output '
@@ -122,7 +125,7 @@ jobs:
           --locked=false
         # The GitLab CI is set to manually triggered to synchronize with GitHub Actions.
         curl --fail --request POST \
-          "https://gitlab.example.com/api/v4/projects/$PROJECTN/trigger/pipeline?token=$TRIGGERT&ref=main"
+          "https://gitlab.com/api/v4/projects/$PROJECTN/trigger/pipeline?token=$TRIGGERT&ref=main"
         journalctl --unit=gitlab-runner --follow --no-tail --output=cat | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
         sudo ./gitlab-runner unregister --name "octocat"
       env:
