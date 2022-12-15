@@ -13,4 +13,5 @@ pages:
   artifacts:
     paths:
     - public
-  when: never
+  only:
+  - trigger
