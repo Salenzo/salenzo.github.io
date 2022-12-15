@@ -14,3 +14,4 @@ pages:
     paths:
     - public
   when: manual
+  allow_failure: false
