@@ -100,13 +100,11 @@ jobs:
         key: gitlab-runner-linux-amd64
     - if: steps.cache-gitlab-runner.outputs.cache-hit != 'true'
       run: |
-        curl -Lo gitlab-runner "https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64"
+        curl -Lfo gitlab-runner "https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-linux-amd64"
     - run: |
         # Mirror to GitLab.
         # This personal, private repository is for Vercel, which doesn't accept organization repositories as sources.
         git push "https://$USERNAME:$PASSWORD@gitlab.com/satgo1546/salenzo.github.io.git" main --force
-        
-        # TODO: set GitLab CI to manual mode and trigger GitLab manually here
 
         # Run GitLab CI/CD pipelines using GitHub Actions as a runner to deploy to GitLab Pages.
         git push "https://$USERNAME:$PASSWORD@gitlab.com/salenzo/salenzo.gitlab.io.git" --all --force
@@ -122,11 +120,16 @@ jobs:
           --docker-image busybox \
           --docker-privileged=true \
           --locked=false
+        # The GitLab CI is set to manually triggered to synchronize with GitHub Actions.
+        curl --fail --request POST \
+          "https://gitlab.example.com/api/v4/projects/$PROJECTN/trigger/pipeline?token=$TRIGGERT&ref=main"
         journalctl --unit=gitlab-runner --follow --no-tail --output=cat | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
         sudo ./gitlab-runner unregister --name "octocat"
       env:
         USERNAME: satgo1546
         PASSWORD: ${{ secrets.GITLAB_TOKEN }}
+        PROJECTN: 41322172
+        TRIGGERT: ${{ secrets.GITLAB_TRIGGER_TOKEN }}
         REGISTRY: ${{ secrets.GITLAB_RUNNER_TOKEN }}
 
   neocities:

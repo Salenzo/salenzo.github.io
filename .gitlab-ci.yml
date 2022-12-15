@@ -13,5 +13,4 @@ pages:
   artifacts:
     paths:
     - public
-  only:
-  - main
+  when: manual
