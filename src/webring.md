@@ -24,6 +24,8 @@ Read the Docs在HTTP标头中指示页面缓存一天，因此不强制刷新就
 
 Vercel不支持从组织名下的仓库部署，使用Vercel CLI可绕过这一限制。
 
+Forestry.io免费站点不活动三个月后将自动关闭，登录后台即可恢复。
+
 SourceForge为开源项目提供`*.sourceforge.io`（原为`*.sourceforge.net`）域名网站托管服务，似乎除了静态网页以外，还支持动态的PHP和CGI程序。
 
 Azure需要绑定银行卡才可注册，使用永久免费的Azure Static Web Apps也不例外。
