@@ -49,10 +49,18 @@
     }
 
     a:active #buttonHighlight {
-      fill: teal;
+      fill: gray;
     }
 
     a:active #buttonShadow {
+      fill: silver;
+    }
+
+    a:hover:active #buttonHighlight {
+      fill: teal;
+    }
+
+    a:hover:active #buttonShadow {
       fill: cyan;
     }
 
