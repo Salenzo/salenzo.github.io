@@ -32,7 +32,8 @@ footer {
   text-align: center;
 }
 
-footer img {
+footer img,
+footer object {
   vertical-align: middle;
 }
 
