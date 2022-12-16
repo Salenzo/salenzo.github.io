@@ -2,7 +2,7 @@
 ===============
 
 0. 共通部分 ![GitHub Actions workflow](https://github.com/Salenzo/salenzo.github.io/actions/workflows/deploy.yml/badge.svg)
-    - 模板导航条、预处理Markdown（含链接）和CSS、子页面目录
+    - 模板导航条、预处理Markdown（含链接）和CSS、子页面目录、映射文件夹结构到路由
     - 精巧而易碎的结构，不锁定依赖项版本。不必哀叹不锁版本不能复现，刻舟求剑逆流而上自取灭亡
 1. [salenzo.github.io ![GitHub deployments](https://img.shields.io/github/deployments/Salenzo/salenzo.github.io/github-pages?logo=github)](https://salenzo.github.io/)
     - 特色：写得一派混乱的样式表，宽为*π*个空格的制表符轻而易举地得罪所有人

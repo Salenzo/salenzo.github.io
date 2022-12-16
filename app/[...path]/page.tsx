@@ -61,7 +61,7 @@ export default function Page({ params: { path } }: Props) {
         <div className="max-w-2xl mx-auto">
           <div
             className={markdownStyles['markdown']}
-            dangerouslySetInnerHTML={{ __html: markdownToHtml(fs.readFileSync('src/' + path.join('/') + '.md', 'utf-8')) }}
+            dangerouslySetInnerHTML={{ __html: markdownToHtml(fs.readFileSync('src/' + path.join('/').replace(/\.html$/, '') + '.md', 'utf-8')) }}
           />
         </div>
       </article>
@@ -71,9 +71,12 @@ export default function Page({ params: { path } }: Props) {
 
 export async function generateStaticParams() {
   function getFiles(dir: string): string[] {
-    return fs.readdirSync(dir, { withFileTypes: true }).flatMap(dirent => dirent.isDirectory() ? getFiles(dir + '/' + dirent.name) : dir + '/' + dirent.name)
+    return fs.readdirSync(dir, { withFileTypes: true })
+      .flatMap(dirent => dirent.isDirectory() ? getFiles(dir + '/' + dirent.name) : dir + '/' + dirent.name)
   }
-  return getFiles('src').filter(path => path.endsWith('.md') && ['src/index.md', 'src/404.md'].indexOf(path) < 0).map(path => path.replace(/^src\/|\.md$/g, '')).map(slug => ({ path: slug.split('/') }))
+  return getFiles('src')
+    .filter(path => path.endsWith('.md') && ['src/index.md', 'src/404.md'].indexOf(path) < 0)
+    .map(path => ({ path: path.replace(/^src\//, '').replace(/\.md$/, '.html').split('/') }))
 }
 
 export const dynamicParams = false

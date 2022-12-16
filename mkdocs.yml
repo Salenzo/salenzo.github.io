@@ -17,6 +17,7 @@ site_dir: _site
 hooks:
 - hooks.py
 plugins: []
+use_directory_urls: false
 markdown_extensions:
   nl2br: {}
   sane_lists: {}
