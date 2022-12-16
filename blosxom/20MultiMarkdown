@@ -34,6 +34,7 @@ use warnings;
 
 use File::Basename;
 use Digest::MD5 qw(md5_hex);
+use MIME::Base64;
 use vars qw($VERSION $g_use_metadata $g_base_url
 	$g_bibliography_title $g_allow_mathml $g_base_header_level $mathParser);
 $VERSION = '2.0.b6';
@@ -2417,29 +2418,19 @@ sub _DoMathSpans {
 	$display_as_block = 1 if ($text =~ /^<<[^\>\>]*>>$/);
 
 	$text =~ s{
-			(?<!\\)		# Character before opening << can't be a backslash
-			(<<)		# $1 = Opening 
-			(.+?)		# $2 = The code block
-			(?:\[(.+)\])?	# $3 = optional label
-			(>>)
+			(?<!\\)\$ # character before opening $ can't be a backslash
+			(.*?[^\\]) # $1 = the math, at least one character long and not ending in backslash
+			\$\$?
 		}{
- 			my $m = "$2";
-			my $label = "";
-			my @attr = (xmlns=>"http://www.w3.org/1998/Math/MathML");
-			
-			if (defined $3) {
-				$label = Header2Label($3);
-				my $header = _RunSpanGamut($3);
-
-				$g_crossrefs{$label} = "#$label";
-				$g_titles{$label} = $header;
-			}
- 			$m =~ s/^[ \t]*//g; # leading whitespace
- 			$m =~ s/[ \t]*$//g; # trailing whitespace
-			push(@attr,(id=>"$label")) if ($label ne "");
-			push(@attr,(display=>"block")) if ($display_as_block == 1);
-
-			$m;
+			my $tex = " $1"; # prepend a space for a custom jsMath to detect the tag
+			$tex =~ s/\A \$/\\displaystyle /;
+			$ENV{"QUERY_STRING"} = $tex;
+			$tex =~ s/&/&amp;/g;
+			$tex =~ s/"/&quot;/g;
+			my ($header, $gif) = split(/\n\n/, qx($blosxom::datadir/../vendor/mimetex.cgi), 2);
+			$gif = encode_base64($gif);
+			$header =~ m/^Vertical-Align: (.+)/m;
+			"<img src=\"data:image/gif;base64,$gif\" style=\"vertical-align: $1px;\" alt=\"$tex\">";
 		}egsx;
 
 	return $text;

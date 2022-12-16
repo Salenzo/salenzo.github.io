@@ -4,7 +4,7 @@ set -e
 cd "$(dirname $0)"
 
 [ vendor/mimetex.cgi -nt "$0" ] || \
-	cc -DAA -DINPUTOK -DWHITE \
+	cc -DAA -DDEFAULTSIZE=2 -DDISPLAYSIZE=3 -DINPUTOK -DWHITE \
 		vendor/mimetex/mimetex.c vendor/mimetex/gifsave.c -lm -o vendor/mimetex.cgi
 
 mkdir -p _site
@@ -26,14 +26,5 @@ do
 EOF
 done
 
-QUERY_STRING=114 vendor/mimetex.cgi | (awk -F ": " '
-$1 == "Vertical-Align" {
-	print "<img style=\"vertical-align: " $2 "px;\" src=\"data:image/gif;base64,"
-}
-
-!NF {
-	
-}
-'
-base64
-)
+# Bundle all JavaScript files into one.
+cat blosxom/jsMath.config.js src/assets/jsMath/jsMath.js blosxom/script.js > _site/script.js
