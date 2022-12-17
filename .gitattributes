@@ -4,3 +4,4 @@
 /blosxom/20*Markdown linguist-vendored
 /src/assets/jsMath/**/*.html linguist-vendored
 /src/assets/jsMath/**/*.js linguist-vendored
+/src/assets/direct-upload-demo.html linguist-vendored
