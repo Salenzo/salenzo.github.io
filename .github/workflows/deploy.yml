@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     # Check-out the repository under $GITHUB_WORKSPACE, so the job can access it.
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
     - name: aaaaaaaaaaaa
       run: |
         w
@@ -44,10 +44,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     # Deploy Jekyll with GitHub Pages dependencies preinstalled.
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.1"
+        ruby-version: "4.0"
         bundler-cache: true
     - run: bundle exec jekyll build
     # Generate a full language spectrum for this repository to be linked in README.md.
@@ -85,19 +85,19 @@ jobs:
           ),
           "</svg>"
         ' > _site/languages.svg
-    - uses: actions/upload-pages-artifact@v1
-    - uses: actions/deploy-pages@v1
+    - uses: actions/upload-pages-artifact@main
+    - uses: actions/deploy-pages@main
 
   gitlab:
     needs: aaaaaa
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
       with:
         fetch-depth: 0
         submodules: recursive
     - id: cache-gitlab-runner
-      uses: actions/cache@v3
+      uses: actions/cache@main
       with:
         path: gitlab-runner
         key: gitlab-runner-linux-amd64
@@ -135,10 +135,10 @@ jobs:
     needs: aaaaaa
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@main
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: "3.1"
+        ruby-version: "4.0"
         bundler-cache: true
     - run: |
         # Deploy to Neocities with a custom script.

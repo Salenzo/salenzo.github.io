@@ -4,10 +4,10 @@ python:
   install:
   - requirements: requirements.txt
 build:
-  os: ubuntu-22.04
+  os: ubuntu-lts-latest
   tools:
-    python: "3"
-    nodejs: "18"
+    python: latest
+    nodejs: latest
   jobs:
     post_install:
     - npm install
