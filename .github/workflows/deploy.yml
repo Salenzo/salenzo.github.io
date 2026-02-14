@@ -114,16 +114,14 @@ jobs:
         sudo ./gitlab-runner register --non-interactive \
           --executor docker \
           --url "https://gitlab.com/" \
-          --registration-token "$REGISTRY" \
+          --token "$REGISTRY" \
           --name "octocat" \
           --docker-image busybox \
-          --docker-privileged=true \
-          --locked=false
+          --docker-privileged=true
         # The GitLab CI is set to manually triggered to synchronize with GitHub Actions.
         curl --fail --request POST \
           "https://gitlab.com/api/v4/projects/$PROJECTN/trigger/pipeline?token=$TRIGGERT&ref=main"
         journalctl --unit=gitlab-runner --follow --no-tail --output=cat | timeout 114 sed '/Job succeeded\|Failed to process runner/q'
-        sudo ./gitlab-runner unregister --name "octocat"
       env:
         USERNAME: satgo1546
         PASSWORD: ${{ secrets.GITLAB_TOKEN }}
